@@ -14,7 +14,7 @@ methods.getTokenData = function(req)
 
     if ((typeof bearerHeader !== 'undefined') && bearerHeader.length>0) {
         const bearer = bearerHeader.split(' ');
-        payload = bearer[1];
+        payload = bearer[1] != undefined ? bearer[1] : bearer[0];
     }
     else if(req.session && req.session.token)
         payload = req.session.token;

@@ -1,24 +1,124 @@
 {
-    "maxissues": 1,
-    "issuestates": "New,Open",
-    "issueseverities": "High,Medium",
+    "maxissues": 1000,
+    "issuestates": "New,Open,InProgress,Reopened,Noise",
+    "issueseverities": "Critical,High,Medium",
     "imurl": "<Jira URL>",
     "imUserName": "<username>",
     "imPassword": "<encrypted password or accesstoken. To encrypt the password run the command "node .\cryptoService.js --encrypt <password>" from the base directory.>",
-    "improjectkey": "<project key>",
     "imissuetype": "<issue type like task, bug, epic, etc.>",
-    "imsummary": "Security issue: %IssueType% found by %Scanner%",
-    "severitymap": {
-        "High": "<value of priority attribute in Jira. Ex: High, Low>",
-        "Medium": "<value of priority attribute in Jira>",
-        "Low": "<value of priority attribute in Jira>",
-        "Information": "<value of priority attribute in Jira>"
+    "imSummary": "Security issue: %IssueType% found by %Scanner%",
+    "severityPriorityMap": {
+        "<AppScan Serverity e.g. High, Low, Critical>":"<Jira priority e.g. High, Medium, Low, Lowest>",
+        "High":"High",
+        "Critical:"Medium",
+        "Low":"Low"
     },
-    "attributeMappings": [
+     "attributeMappings": [
         {
-            "imAttr": "labels",
-            "appScanAttr": "Application Name",
+            "imAttrId": "<This is an attribute id from the IM>",
+            "imAttrName:"<The name of the attribute from the IM>"
+            "defaultAttrValue": "<If you want to have a hardcoded value for an IM attribute then you use this field>",
+            "appScanAttr": "<This is an attribute name from AppScan>",
+            "type": "<Type of Jira attribute. Currently we support following types: String, Array, Dropdown, DateTime>"
+        },
+        {
+            "imAttrId": "customfield_10200",
+            "imAttrName":"Application Name",
+            "defaultAttrValue": "",
+            "appScanAttr": "ApplicationName",
+            "type": "String"
+        },
+        {
+            "imAttrId": "labels",
+            "imAttrName":"Labels",
+            "defaultAttrValue": "",
+            "appScanAttr": [
+                "ApplicationName",
+                "ApplicationId",
+                "testing"
+            ],
             "type": "Array"
+        },
+        {
+            "imAttrId": "customfield_10220",
+            "imAttrName":"AppScan System",
+            "defaultAttrValue": "ASoC - Self Service",
+            "appScanAttr": "",
+            "type": "Dropdown"
+        },
+        {
+            "imAttrId": "customfield_10202",
+            "imAttrName":"Issue Type",
+            "defaultAttrValue": "",
+            "appScanAttr": "IssueType",
+            "type": "String"
+        },
+        {
+            "imAttrId": "customfield_10203",
+            "imAttrName":"Issue Type Id",
+            "defaultAttrValue": "",
+            "appScanAttr": "IssueTypeId",
+            "type": "String"
+        },
+        {
+            "imAttrId": "customfield_10204",
+            "defaultAttrValue": "",
+            "appScanAttr": "Location",
+            "type": "String"
+        },
+        {
+            "imAttrId": "customfield_10221",
+            "imAttrName":"Scanning Tool",
+            "defaultAttrValue": "ASoC",
+            "appScanAttr": "",
+            "type": "Dropdown"
+        },
+        {
+            "imAttrId": "customfield_10222",
+            "imAttrName":"Issue Severity",
+            "defaultAttrValue": "",
+            "appScanAttr": "Severity",
+            "type": "Dropdown"
+        },
+        {
+            "imAttrId": "customfield_10215",
+            "imAttrName":"Date Created",
+            "defaultAttrValue": "",
+            "appScanAttr": "DateCreated",
+            "type": "DateTime"
+        },
+        {
+            "imAttrId": "customfield_10211",
+            "imAttrName":"Application Date",
+            "defaultAttrValue": "NA",
+            "appScanAttr": "",
+            "type": "String"
+        },
+        {
+            "imAttrId": "customfield_10217",
+            "imAttrName":"Application status",
+            "defaultAttrValue": "NA",
+            "appScanAttr": "",
+            "type": "Dropdown"
+        },
+        {
+            "imAttrId": "customfield_10218",
+            "imAttrName":"Application Mne",
+            "defaultAttrValue": "NA",
+            "appScanAttr": "",
+            "type": "Dropdown"
         }
-    ]
+    ],
+     "jiraToAppScanStatusMapping": {
+        "<Jira status>":"<AppScan status>",
+        "<Jira status>":"<AppScan status>"
+    },
+    "appScanToJiraStatusMapping": {
+        "<AppScan status>": "<Jira status>",
+        "<AppScan status>": "<Jira status>",
+    },
+    "jiraStatusIdMapping": {
+        "<Jira status name>": "<Jira status id>",
+        "<Jira status name>": "<Jira status id>"
+    }
 }

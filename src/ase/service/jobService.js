@@ -10,7 +10,7 @@ methods.getScanJobDetails = async (jobId, token) => {
 
 methods.searchJobs = async (queryString, token) => {
     const url = constants.ASE_JOB_SEARCH+"?queryString="+queryString;
-    return await util.httpCall("GET", token, url);    
+    return await util.httpCall("GET", token, url);  
 };
 
 module.exports = methods;

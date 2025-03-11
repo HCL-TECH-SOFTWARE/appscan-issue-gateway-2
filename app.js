@@ -20,25 +20,24 @@ log4js.configure({
     app: { type: 'file', filename: process.env.APP_LOG, "maxLogSize": maxLogSize, "numBackups": process.env.NUMBER_OF_BACKUPS }
   },
   categories: {
-    default: { appenders: [ constants.LOG_APPENDER1, constants.LOG_APPENDER2 ], level: constants.LOG_LEVEL }
+    default: { appenders: [constants.LOG_APPENDER1, constants.LOG_APPENDER2], level: constants.LOG_LEVEL }
   }
 });
 
 app.use((req, res, next) => {
-  
-   res.header("Access-Control-Allow-Origin", req.headers.origin);
-   res.header("Access-Control-Allow-Credentials", true);
-   res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept, auth-token, responseType");
-   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
 
-   if(req.method === 'OPTIONS')
-   {
-       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-       return res.status(200).json({});
-   }
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, auth-token, responseType");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
 
-   res.header('Content-Security-Policy',"default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'");    
-   next();
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+    return res.status(200).json({});
+  }
+
+  res.header('Content-Security-Policy', "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'");
+  next();
 });
 
 app.use(express.json());
@@ -52,9 +51,8 @@ app.use(cookieParser());
 // app.use('/ase/api/job', require('./src/ase/routes/job'));
 // app.use('/ase/api/issue', require('./src/ase/routes/issue'));
 // app.use('/ase/api/application', require('./src/ase/routes/application'));
-app.use('/ase/api/igw', require('./src/igw/routes/igw'));
+app.use('/api/igw', require('./src/igw/routes/igw'));
 require('./src/utils/swagger')(app);
 
-logger.info(constants.SWAGGER_PAGE_URL+` https://`+hostname+`:`+process.env.SECURE_PORT+constants.SWAGGER_CONTEXT_URL); 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+logger.info(constants.SWAGGER_PAGE_URL + ` https://` + hostname + `:` + process.env.SECURE_PORT + constants.SWAGGER_CONTEXT_URL);
 module.exports = app;

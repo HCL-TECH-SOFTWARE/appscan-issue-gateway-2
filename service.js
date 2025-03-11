@@ -3,12 +3,15 @@ const fs = require('fs');
 var path = require('path');
 const appFilePath = path.resolve(path.join(__dirname, 'server.js'));
 var cmdprogram = require('commander');
-const serviceName = "IssueGateway";
+const serviceName = "IssueGateway2";
 
 var issueGatewayService = new service({
-    name: 'IssueGateway',
+    name: 'IssueGateway2',
     description: 'Interface to integrate SailPoint and AppScan',
-    script: appFilePath
+    script: appFilePath,
+    nodeOptions: [
+        '--openssl-legacy-provider'
+    ]
 });
 
 issueGatewayService._directory =  path.resolve();
