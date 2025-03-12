@@ -9,7 +9,7 @@
   "author": "shashidharp@hcl.com",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.7.9",
+    "axios": "^1.8.2",
     "cheerio": "^1.0.0-rc.12",
     "cookie-parser": "^1.4.5",
     "cron": "^2.1.0",
