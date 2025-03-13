@@ -8,7 +8,7 @@
     "imissuetype": "<issue type like task, bug, epic, etc.>",
     "imSummary": "Security issue: %IssueType% found by %Scanner%",
     "severityPriorityMap": {
-        "<AppScan Serverity e.g. High, Low, Critical>":"<Jira priority e.g. High, Medium, Low, Lowest>",
+        "<AppScan severity e.g. High, Low, Critical>":"<Jira priority e.g. High, Medium, Low, Lowest>",
         "High":"High",
         "Critical:"Medium",
         "Low":"Low"
