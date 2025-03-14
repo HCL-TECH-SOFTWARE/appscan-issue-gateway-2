@@ -30,7 +30,7 @@ var constants = {
 	TOKEN_EXPIRY_TIME: 43200, //JWT expiry time is 12 hours (3600 x 12)
 	JWT_SECRET_KEY: "2022_token_for_ase_for_IGW_Integration",
 	CONTEXT_API: "/api",
-	SWAGGER_VERSION: "1.0.0",
+	SWAGGER_VERSION: "1.1.0",
 
 	//ASE APIs
 	ASE_API_KEYLOGIN: "/api/keylogin/apikeylogin",
