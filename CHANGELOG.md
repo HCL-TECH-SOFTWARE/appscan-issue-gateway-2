@@ -1,0 +1,16 @@
+Release Summary
+=========
+1.1.0 (March 2025)
+------
+* Added bidirectional status management feature.
+* Added support for AppScan on Cloud and AppScan 360°.
+* Added dynamic attribute mapping support in issue imports.
+* Added AppScan severity and Jira priority map support in issue imports.
+* Bug fixes.
+
+1.0.0 (Oct 2022)
+------
+* Initial release.
+* Implemented synchronization between AppScan Enterprise (ASE) and Jira.
+* REST API for seamless synchronization.
+* Windows Service installation support.
