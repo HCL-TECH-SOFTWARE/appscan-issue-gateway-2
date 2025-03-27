@@ -5,7 +5,7 @@ The `appscan-issue-gateway-v2` facilitates issue synchronization between AppScan
 ## Prerequisites
 The following prerequisites are required:
 
-1. Node.js runtime version 18.18.0 or later
+1. Node.js runtime version 22.14.0 or later
 2. A relevant AppScan product:
    - HCL AppScan Enterprise version 10.x or later
    - AppScan on Cloud
