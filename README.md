@@ -2,6 +2,8 @@
 
 The `appscan-issue-gateway-v2` facilitates issue synchronization between AppScan (AppScan on Cloud, AppScan 360°, and AppScan Enterprise) and Jira. This capability enables AppScan users to transfer security issue data to other systems, eliminating the need for custom REST calls and plumbing. This service operates as a REST API, making it suitable for automated scanning workflows where it is invoked for issue processing.
 
+> **SECURITY UPDATE**: This version introduces secure credential storage using the system's native credential managers (Windows Credential Manager, macOS Keychain, or Linux Secret Service API). All sensitive information including AppScan credentials and encryption keys are now stored securely in your system's native credential store. Please update your configuration to use the new secure credential management system.
+
 ## Prerequisites
 The following prerequisites are required:
 
@@ -23,9 +25,9 @@ To install the application, complete the following steps:
      `npm install`
 3. Edit the [`.env`](.env ) file in the home directory by renaming [`.env.temp`](.env.temp ) to [`.env`](.env ) and configure the following properties:
    - `APPSCAN_URL`: The URL of AppScan Enterprise, AppScan on Cloud, or AppScan 360°
-   - `keyId`: The AppScan key ID
-   - `keySecret`: AppScan key secret
    - `APPSCAN_PROVIDER`: AppScan on Cloud, AppScan 360°, or AppScan Enterprise
+   
+   Note: The `keyId` and `keySecret` are no longer stored in the .env file. They are now managed using the secure credential system.
    - `APPSCAN_TIMEZONE` : Your local time zone (for example, by default, keep it 00:00)
    - `SECURE_PORT`: The port the gateway application listens to
    - `SSL_PFX_CERT_FILE`: The path to the certificate in PFX forma
@@ -80,6 +82,60 @@ To install the application, complete the following steps:
 11. If installing the service fails following step 8, complete the following steps:
     - Download the NSSM utility from [NSSM](https://nssm.cc/download)
     - Launch `nssm.exe` from the `win64` folder by running the command `nssm.exe install "HCL Issue Gateway"`
+
+## Secure Credential Management
+The application uses your system's native credential managers to securely store sensitive information:
+- Windows: Windows Credential Manager
+- macOS: Keychain
+- Linux: Secret Service API/libsecret (requires `libsecret` and `gnome-keyring`)
+
+### Available Commands
+
+#### Managing AppScan Credentials
+```bash
+# Set AppScan credentials
+npm run credentials set <keyId> <keySecret>
+
+# Example:
+npm run credentials set "a2aa7331-eff1-366d-503d-c6bf40f7461c" "tMKItIoc2BrIRisBQQVHhKxrqSnoHYo4HaVhFc0PLkPS"
+
+# Verify credentials are stored correctly
+npm run credentials verify
+
+# Remove stored credentials
+npm run credentials remove
+```
+
+#### Managing Security Key (Optional)
+The security key is used for encryption/decryption operations. By default, a built-in key (`Exchange6547wordP22swordExc$$nge`) is used, but you can set your own for enhanced security.
+
+```bash
+# Set a custom security key
+npm run credentials set security-key <key>
+
+# Example (using a strong security key):
+npm run credentials set security-key "MyCustomSecureKey123!@#"
+
+# View current security key
+npm run credentials get security-key
+
+# Remove custom security key (reverts to default)
+npm run credentials remove security-key
+
+# Verify security key configuration
+npm run credentials verify security-key
+```
+
+#### Combined Command
+You can set both AppScan credentials and security key in one command:
+```bash
+npm run credentials set <keyId> <keySecret> <securityKey>
+
+# Example:
+npm run credentials set "a2aa7331-eff1-366d-503d-c6bf40f7461c" "tMKItIoc2BrIRisBQQVHhKxrqSnoHYo4HaVhFc0PLkPS" "MyCustomSecureKey123!@#"
+```
+
+Note: The key values shown in the examples are for illustration purposes only. Replace them with your actual AppScan credentials and a secure custom key.
 
 ## Known Issues
 AppScan Issue Gateway has the following limitations:
