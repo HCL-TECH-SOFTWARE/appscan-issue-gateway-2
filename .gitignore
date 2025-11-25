@@ -1,5 +1,10 @@
 /node_modules
 /daemon
-/logs/*
+/logs
 /.env
 /config/JIRA.json
+/temp
+/*.irx
+/*.zip
+/appscan-config.xml
+/config

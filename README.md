@@ -73,15 +73,44 @@ To install the application, complete the following steps:
 
 5. Rename [`config/projectKey.json.temp`](config/projectKey.json.temp ) to [`config/projectKey.json`](config/projectKey.json ) and map the AppScan application ID to the Jira project key as required.
 6. Rename [`config/projectScanKey.json.temp`](config/projectScanKey.json.temp ) to [`config/projectScanKey.json`](config/projectScanKey.json )  and map the AppScan application ID to the Jira project key as required.
-7. To start the gateway application locally, run the command `npm start` from the root directory. To install it as a service, see the next step.
-8. To install or uninstall the application as a Windows Service, run the following commands from the root directory:
-   - `node service.js --install`
-   - `node service.js --uninstall`
-9. Access the API's Swagger page using the URL `https://<hostname>:<port>/api/swagger`. This URL can be found in the console or log.
-10. Use the API to provide Issue Management details and start the synchronizer, or edit the file in the config directory.
-11. If installing the service fails following step 8, complete the following steps:
-    - Download the NSSM utility from [NSSM](https://nssm.cc/download)
-    - Launch `nssm.exe` from the `win64` folder by running the command `nssm.exe install "HCL Issue Gateway"`
+
+## Running the Application
+
+### Local Development
+To start the application in development mode with auto-reload:
+```bash
+npm start
+```
+
+### Production Mode
+To run the application as a background service:
+
+**First time setup:**
+```bash
+npm run pm2:setup
+```
+This will start the application and you can close the command prompt. The application will continue running in the background.
+
+**Daily management:**
+```bash
+npm run pm2:start      # Start the application
+npm run pm2:stop       # Stop the application
+npm run pm2:restart    # Restart the application
+npm run pm2:logs       # View application logs
+npm run pm2:status     # Check application status
+```
+
+**Optional - Automatic startup on system reboot:**
+If you want the application to restart automatically when your computer boots (requires admin):
+```bash
+npm run pm2:setup      # Re-run setup to enable this feature
+```
+
+## Accessing the Application
+
+Access the API's Swagger page using the URL `https://<hostname>:<port>/api/swagger`. The URL is also displayed in the logs.
+
+Use the API to provide Issue Management details and start the synchronizer, or edit the configuration files in the `config/` directory.
 
 ## Secure Credential Management
 The application uses your system's native credential managers to securely store sensitive information:
