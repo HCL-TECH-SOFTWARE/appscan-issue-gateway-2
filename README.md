@@ -82,29 +82,42 @@ To start the application in development mode with auto-reload:
 npm start
 ```
 
-### Production Mode
-To run the application as a background service:
-
-**First time setup:**
+### Installation as Service Locally
+To run the application directly in production mode:
 ```bash
-npm run pm2:setup
-```
-This will start the application and you can close the command prompt. The application will continue running in the background.
-
-**Daily management:**
-```bash
-npm run pm2:start      # Start the application
-npm run pm2:stop       # Stop the application
-npm run pm2:restart    # Restart the application
-npm run pm2:logs       # View application logs
-npm run pm2:status     # Check application status
+npm run start:prod
 ```
 
-**Optional - Automatic startup on system reboot:**
-If you want the application to restart automatically when your computer boots (requires admin):
+You can also use process managers like PM2, forever, or systemd to run the application as a service. Below is an example using PM2.
+
+### Running as a Background Service with PM2
+
+#### Installing PM2
 ```bash
-npm run pm2:setup      # Re-run setup to enable this feature
+npm install -g pm2
 ```
+
+#### Starting the Application
+```bash
+pm2 start server.js --name IssueGateway2 --node-args="--openssl-legacy-provider"
+```
+
+#### Managing the Service
+```bash
+pm2 stop IssueGateway2       # Stop the service
+pm2 restart IssueGateway2    # Restart the service
+pm2 delete IssueGateway2     # Remove the service
+pm2 logs IssueGateway2       # View logs
+pm2 status                   # Check status
+```
+
+#### Auto-Start on System Boot
+```bash
+pm2 startup                  # Generate startup script
+pm2 save                     # Save current configuration
+```
+
+For more information, visit the [PM2 documentation](https://pm2.keymetrics.io/docs/usage/quick-start/).
 
 ## Accessing the Application
 

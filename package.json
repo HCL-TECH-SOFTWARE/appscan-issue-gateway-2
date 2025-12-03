@@ -5,18 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider nodemon ./server.js",
-    "start:prod": "cross-env NODE_OPTIONS=--openssl-legacy-provider pm2 start ecosystem.config.js",
-    "stop": "pm2 stop IssueGateway2",
-    "restart": "pm2 restart IssueGateway2",
-    "logs": "pm2 logs IssueGateway2",
-    "pm2:setup": "node scripts/pm2-setup.js",
-    "pm2:start": "node scripts/pm2-manager.js start",
-    "pm2:stop": "node scripts/pm2-manager.js stop",
-    "pm2:restart": "node scripts/pm2-manager.js restart",
-    "pm2:logs": "node scripts/pm2-manager.js logs",
-    "pm2:status": "node scripts/pm2-manager.js status",
-    "pm2:uninstall": "node scripts/pm2-manager.js uninstall",
-    "pm2:help": "node scripts/pm2-manager.js help",
+    "start:prod": "cross-env NODE_OPTIONS=--openssl-legacy-provider node ./server.js",
     "credentials": "node scripts/manage-credentials.js",
     "security-key": "node cryptoService.js"
   },
@@ -39,7 +28,6 @@
     "log4js": "^6.3.0",
     "multiparty": "^4.2.3",
     "nodemon": "^2.0.14",
-    "pm2": "^5.3.0",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6"
   },
