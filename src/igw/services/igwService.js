@@ -21,6 +21,7 @@ const asocJobService = require("../../asoc/service/jobService");
 const jiraService = require("./jiraService");
 const aseAuthService = require('../../ase/service/authService');
 const asocAuthService = require('../../asoc/service/authService');
+const credentialService = require('../../utils/credentialService');
 var methods = {};
 const constants = require("../../utils/constants");
 const log4js = require("log4js");
@@ -32,16 +33,26 @@ const addData = require('../../utils/htmlTemplate');
 
 methods.aseLogin = async () => {
     var inputData = {};
-    inputData["keyId"] = process.env.keyId;
-    inputData["keySecret"] = process.env.keySecret;
+    inputData["keyId"] = await credentialService.getKeyId();
+    inputData["keySecret"] = await credentialService.getKeySecret();
+    
+    if (!inputData["keyId"] || !inputData["keySecret"]) {
+        throw new Error("AppScan credentials not found in secure storage. Please set them first.");
+    }
+    
     const result = await aseAuthService.keyLogin(inputData);
     return result.data.sessionId;
 }
 
 methods.asocLogin = async () => {
     var inputData = {};
-    inputData["keyId"] = process.env.keyId;
-    inputData["keySecret"] = process.env.keySecret;
+    inputData["keyId"] = await credentialService.getKeyId();
+    inputData["keySecret"] = await credentialService.getKeySecret();
+    
+    if (!inputData["keyId"] || !inputData["keySecret"]) {
+        throw new Error("AppScan credentials not found in secure storage. Please set them first.");
+    }
+    
     const result = await asocAuthService.keyLogin(inputData);
     return result.data.Token;
 }

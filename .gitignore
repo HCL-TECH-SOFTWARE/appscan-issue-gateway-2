@@ -1,5 +1,13 @@
 /node_modules
 /daemon
-/logs/*
+/logs
 /.env
 /config/JIRA.json
+/temp
+/tempReports
+/*.irx
+/*.zip
+/appscan-config.xml
+/config
+/whitesource
+/wss-unified-agent.config
