@@ -1,5 +1,11 @@
 Release Summary
 =========
+1.1.1 (December 2025)
+------
+* Enhanced credential management with native OS credential storage integration for improved security.
+* Improved service installation with modern tooling support.
+* Security vulnerability fixes.
+
 1.1.0 (March 2025)
 ------
 * Added bidirectional status management feature.

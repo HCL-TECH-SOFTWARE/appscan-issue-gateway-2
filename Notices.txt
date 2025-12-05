@@ -1,0 +1,837 @@
+-----------------------
+Notices and Information
+-----------------------
+----------------------------------------------------------
+HCL AppScan Issue Gateway - NodeJS Notices and Information
+----------------------------------------------------------
+
+======
+DETAIL
+======
+Note: generic licenses are marked with (*)
+Note: missing copyright references are marked with (*)
+********************************************************************
+1. Library: axios-1.13.1.tgz Product: AppScan Issue Gateway - NodeJS
+********************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/c5e62bc0-dc5c-473d-9ca0-8d96f45b42b4
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 2
+--------------------
+Copyrighted under Copyright 2014 Matt Zabriskie & Collaborators
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/c5e62bc0-dc5c-473d-9ca0-8d96f45b42b4
+
+
+--------------------
+Copyright 2 out of 2
+--------------------
+Copyrighted under Copyright 2014 Matt Zabriskie & Collaborators
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/c5e62bc0-dc5c-473d-9ca0-8d96f45b42b4
+
+
+*********************************************************************
+2. Library: cheerio-1.1.2.tgz Product: AppScan Issue Gateway - NodeJS
+*********************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/bf3b24be-45da-4ffb-9a49-8f7e0706ccfb
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 2
+--------------------
+Copyrighted under Copyright 2022 The Cheerio contributors
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/bf3b24be-45da-4ffb-9a49-8f7e0706ccfb
+
+
+--------------------
+Copyright 2 out of 2
+--------------------
+Copyrighted under Copyright 2016 Matt Mueller
+Copyright terms can be found at: https://github.com/cheeriojs/cheerio/blob/8e9a0194ecd181f2e59ebd9acf0aed65f132f75a/LICENSE
+
+
+***************************************************************************
+3. Library: cookie-parser-1.4.5.tgz Product: AppScan Issue Gateway - NodeJS
+***************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/645ce729-21a3-46bc-b911-f5e369021605
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 2
+--------------------
+Copyrighted under Copyright 2015 Douglas Christopher Wilson <doug@somethingdoug.com>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/645ce729-21a3-46bc-b911-f5e369021605
+
+
+--------------------
+Copyright 2 out of 2
+--------------------
+Copyrighted under Copyright 2014 TJ Holowaychuk <tj@vision-media.ca>
+Copyright terms can be found at: https://github.com/expressjs/cookie-parser/blob/1.4.5/LICENSE
+
+
+******************************************************************
+4. Library: cron-2.1.0.tgz Product: AppScan Issue Gateway - NodeJS
+******************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/9b66c421-095d-4ff0-9731-7ef127a6d474
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Copyrighted under Copyright 2017 Nicholas Campbell <nicholas.j.campbell@gmail.com>
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/9b66c421-095d-4ff0-9731-7ef127a6d474
+
+
+
+
+********************************************************************
+5. Library: crypto-1.0.1.tgz Product: AppScan Issue Gateway - NodeJS
+********************************************************************
+========
+LICENSES
+========
+Licensed under ISC
+License terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/7cc0bac1-e25a-4d6c-bda7-bba622d919e4
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Unspecified Copyright
+Reviewed by the WhiteSource Research Team
+Library copyrights could not be established
+
+
+
+
+*********************************************************************
+6. Library: dotenv-10.0.0.tgz Product: AppScan Issue Gateway - NodeJS
+*********************************************************************
+========
+LICENSES
+========
+Licensed under BSD 2
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/d58db12a-cd79-4e8f-874e-6723dcf02aaa
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 2
+--------------------
+Copyrighted under Copyright 2015 Scott Motte
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/c7a5aa6a-0093-47b9-b00c-f41876f7dddf
+
+
+--------------------
+Copyright 2 out of 2
+--------------------
+Copyrighted under Copyright 2015 Scott Motte
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/d58db12a-cd79-4e8f-874e-6723dcf02aaa
+
+
+**********************************************************************
+7. Library: express-4.17.1.tgz Product: AppScan Issue Gateway - NodeJS
+**********************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://github.com/expressjs/express
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 4
+--------------------
+Copyrighted under Copyright 2013-2014 Roman Shtylman <shtylman+expressjs@gmail.com>
+Copyright terms can be found at: https://github.com/expressjs/express/blob/4.17.1/LICENSE
+
+
+--------------------
+Copyright 2 out of 4
+--------------------
+Copyrighted under Copyright 2009-2014 TJ Holowaychuk <tj@vision-media.ca>
+Copyright terms can be found at: https://github.com/expressjs/express/blob/4.17.1/LICENSE
+
+
+--------------------
+Copyright 3 out of 4
+--------------------
+Copyrighted under Copyright 2014-2015 Douglas Christopher Wilson <doug@somethingdoug.com>
+Copyright terms can be found at: https://github.com/expressjs/express/blob/4.17.1/LICENSE
+
+
+--------------------
+Copyright 4 out of 4
+--------------------
+Copyrighted under Copyright 2013-2014 Roman Shtylman <shtylman
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/60c41c40-a46e-4023-969b-0d0b185d3ff3
+
+
+******************************************************************************
+8. Library: express-session-1.17.2.tgz Product: AppScan Issue Gateway - NodeJS
+******************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/8dc2c931-0ed9-4a7d-9d03-409fd7292d57
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 6
+--------------------
+Copyrighted under Copyright 2011 TJ Holowaychuk <tj@vision-media.ca>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/8dc2c931-0ed9-4a7d-9d03-409fd7292d57
+
+
+--------------------
+Copyright 2 out of 6
+--------------------
+Copyrighted under Copyright 2010 Sencha Inc
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/8dc2c931-0ed9-4a7d-9d03-409fd7292d57
+
+
+--------------------
+Copyright 3 out of 6
+--------------------
+Copyrighted under Copyright 2014-2015 Douglas Christopher Wilson <doug@somethingdoug.com>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/8dc2c931-0ed9-4a7d-9d03-409fd7292d57
+
+
+--------------------
+Copyright 4 out of 6
+--------------------
+Copyrighted under Copyright 2011 TJ Holowaychuk <tj@vision-media.ca>
+Copyright terms can be found at: https://github.com/expressjs/session/blob/v1.17.2/LICENSE
+
+
+--------------------
+Copyright 5 out of 6
+--------------------
+Copyrighted under Copyright 2014-2015 Douglas Christopher Wilson <doug@somethingdoug.com>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/8dc2c931-0ed9-4a7d-9d03-409fd7292d57
+
+
+--------------------
+Copyright 6 out of 6
+--------------------
+Copyrighted under Copyright 2010 Sencha Inc
+Copyright terms can be found at: https://github.com/expressjs/session/blob/v1.17.2/LICENSE
+
+
+********************************************************************************
+9. Library: express-validator-6.13.0.tgz Product: AppScan Issue Gateway - NodeJS
+********************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/d2b5c1f3-7fd7-4808-80e0-7602ab46a123
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 2
+--------------------
+Copyrighted under Copyright 2010 Chris O'Hara <cohara87@gmail.com>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/d2b5c1f3-7fd7-4808-80e0-7602ab46a123
+
+
+--------------------
+Copyright 2 out of 2
+--------------------
+Copyrighted under Copyright 2010 Chris O'Hara <cohara87@gmail.com>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/d2b5c1f3-7fd7-4808-80e0-7602ab46a123
+
+
+******************************************************************************
+10. Library: fast-xml-parser-4.5.3.tgz Product: AppScan Issue Gateway - NodeJS
+******************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/f91f06ab-e059-47a3-b958-1d5b50be4d39
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Copyrighted under Copyright 2017 Amit Kumar Gupta
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/f91f06ab-e059-47a3-b958-1d5b50be4d39
+
+
+
+
+************************************************************************
+11. Library: form-data-4.0.4.tgz Product: AppScan Issue Gateway - NodeJS
+************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/52359521-91f8-46d2-8a85-484a887617b1
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Copyrighted under Copyright 2012 Felix Geisendörfer (felix@debuggable.com) and contributors
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/0813b84f-9cdb-4eed-87a2-a9fbfd58d118
+
+
+
+
+***************************************************************************
+12. Library: jsonwebtoken-9.0.2.tgz Product: AppScan Issue Gateway - NodeJS
+***************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/b5d81c03-0c17-45af-9421-806d2eb8ed1c
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Copyrighted under Copyright 2015 Auth0, Inc
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/b5d81c03-0c17-45af-9421-806d2eb8ed1c
+
+
+
+
+*****************************************************************
+13. Library: keytar-7.9.0 Product: AppScan Issue Gateway - NodeJS
+*****************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: Cannot be established
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Copyrighted under Copyright 2013 GitHub Inc
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/bcda95ba-b1c2-4a05-89e4-bbe24915ccbe
+
+
+
+
+*********************************************************************
+14. Library: keytar-7.9.0.tgz Product: AppScan Issue Gateway - NodeJS
+*********************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/bcda95ba-b1c2-4a05-89e4-bbe24915ccbe
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Copyrighted under Copyright 2013 GitHub Inc
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/bcda95ba-b1c2-4a05-89e4-bbe24915ccbe
+
+
+
+
+*********************************************************************
+15. Library: log4js-6.3.0.tgz Product: AppScan Issue Gateway - NodeJS
+*********************************************************************
+========
+LICENSES
+========
+Licensed under Apache 2.0
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/e696670b-fb1c-4a47-8b98-e274ba942f43
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 2
+--------------------
+Copyrighted under Copyright 2015 Gareth Jones (with contributions from many other people)
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/dfe4fcfa-9015-45ee-96a2-2c57059f61e1
+
+
+--------------------
+Copyright 2 out of 2
+--------------------
+Copyrighted under Copyright 2015 Gareth Jones (with contributions from many other people)
+Copyright terms can be found at: https://github.com/log4js-node/log4js-node/blob/v6.3.0/LICENSE
+
+
+=======
+NOTICES
+=======
+Notices:
+NOTICE.txt
+Template Text:Apache Batik
+Copyright 1999-2007 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+This software contains code from the World Wide Web Consortium (W3C) for the 
+Document Object Model API (DOM API) and SVG Document Type Definition (DTD).
+
+This software contains code from the International Organisation for
+Standardization for the definition of character entities used in the software's
+documentation.
+
+This product includes images from the Tango Desktop Project
+(http://tango.freedesktop.org/).
+
+This product includes images from the Pasodoble Icon Theme
+(http://www.jesusda.com/projects/pasodoble).
+
+
+*************************************************************************
+16. Library: multiparty-4.2.3.tgz Product: AppScan Issue Gateway - NodeJS
+*************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/d6768837-4270-422f-b732-d1e3e74d3a49
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 6
+--------------------
+Copyrighted under Copyright 2014 Andrew Kelley
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/d6768837-4270-422f-b732-d1e3e74d3a49
+
+
+--------------------
+Copyright 2 out of 6
+--------------------
+Copyrighted under Copyright 2013 Felix Geisendörfer
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/d6768837-4270-422f-b732-d1e3e74d3a49
+
+
+--------------------
+Copyright 3 out of 6
+--------------------
+Copyrighted under Copyright 2014 Douglas Christopher Wilson
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/d6768837-4270-422f-b732-d1e3e74d3a49
+
+
+--------------------
+Copyright 4 out of 6
+--------------------
+Copyrighted under Copyright 2014 Douglas Christopher Wilson
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/da6a001f-4a8a-45e7-9ce4-2532e783293b
+
+
+--------------------
+Copyright 5 out of 6
+--------------------
+Copyrighted under Copyright 2013 Felix Geisendörfer
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/da6a001f-4a8a-45e7-9ce4-2532e783293b
+
+
+--------------------
+Copyright 6 out of 6
+--------------------
+Copyrighted under Copyright 2014 Andrew Kelley
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/d6768837-4270-422f-b732-d1e3e74d3a49
+
+
+*************************************************************************
+17. Library: node-addon-api-4.3.0 Product: AppScan Issue Gateway - NodeJS
+*************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: Cannot be established
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 2
+--------------------
+Copyrighted under Copyright 2017 Node.js API collaborators
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/894e4c0c-611c-4b62-a10e-f2c50169abb9
+
+
+--------------------
+Copyright 2 out of 2
+--------------------
+Copyrighted under Copyright 2017 Node.js API collaborators
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/2673fc4b-48bb-46fa-a3fa-7175ea7019d4
+
+
+***********************************************************************
+18. Library: nodemon-2.0.14.tgz Product: AppScan Issue Gateway - NodeJS
+***********************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/273ce447-143e-423a-a53e-2b3e44c66e10
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 2
+--------------------
+Copyrighted under Copyright 2010 present, Remy Sharp, https://remysharp.com <remy@remysharp.com>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/273ce447-143e-423a-a53e-2b3e44c66e10
+
+
+--------------------
+Copyright 2 out of 2
+--------------------
+Copyrighted under Copyright 2010 present, Remy Sharp, https://remysharp.com <remy@remysharp.com>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/273ce447-143e-423a-a53e-2b3e44c66e10
+
+
+****************************************************************************
+19. Library: swagger-jsdoc-6.1.0.tgz Product: AppScan Issue Gateway - NodeJS
+****************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/1dae8a62-864b-4edd-b40a-865215f5a926
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+--------------------
+Copyright 1 out of 6
+--------------------
+Copyrighted under Copyright 2015 devlouisc
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/1dae8a62-864b-4edd-b40a-865215f5a926
+
+
+--------------------
+Copyright 2 out of 6
+--------------------
+Copyrighted under Copyright 2013 Fliptoo <fliptoo.studio@gmail.com>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/1dae8a62-864b-4edd-b40a-865215f5a926
+
+
+--------------------
+Copyright 3 out of 6
+--------------------
+Copyrighted under Copyright 2015 Surnet
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/1dae8a62-864b-4edd-b40a-865215f5a926
+
+
+--------------------
+Copyright 4 out of 6
+--------------------
+Copyrighted under Copyright 2015 devlouisc
+Copyright terms can be found at: https://github.com/Surnet/swagger-jsdoc/blob/v6.1.0/LICENSE
+
+
+--------------------
+Copyright 5 out of 6
+--------------------
+Copyrighted under Copyright 2013 Fliptoo <fliptoo.studio@gmail.com>
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/1dae8a62-864b-4edd-b40a-865215f5a926
+
+
+--------------------
+Copyright 6 out of 6
+--------------------
+Copyrighted under Copyright 2015 Surnet
+Copyright terms can be found at: https://index.whitesourcesoftware.com/gri/app/reader/resource/content/asString/1dae8a62-864b-4edd-b40a-865215f5a926
+
+
+***************************************************************************
+20. Library: swagger-ui-dist-3.52.5 Product: AppScan Issue Gateway - NodeJS
+***************************************************************************
+========
+LICENSES
+========
+Licensed under Apache 2.0
+License terms can be found at: Cannot be established
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Copyrighted under Copyright 2020 SmartBear Software Inc
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/fe01e6bb-5997-4681-aed1-d61274a3045c
+
+
+
+
+*********************************************************************************
+21. Library: swagger-ui-express-4.1.6.tgz Product: AppScan Issue Gateway - NodeJS
+*********************************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/8735f2f0-a751-4c78-9786-052fc6363bde
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Copyrighted under Copyright 2018 Scott IT London
+Copyright terms can be found at: https://index.mend.io/gri/app/reader/resource/content/asString/8735f2f0-a751-4c78-9786-052fc6363bde
+
+
+
+
+*******************************************************************************************
+22. Library: swagger-ui-standalone-preset-3.52.3.js Product: AppScan Issue Gateway - NodeJS
+*******************************************************************************************
+========
+LICENSES
+========
+Licensed under Apache 2.0
+License terms can be found at: https://github.com/cdnjs/cdnjs/blob/master/ajax/libs/swagger-ui/package.json
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+(*) The copyright for this library is unknown
+
+*********************************************************************
+23. Library: windows-kill.exe Product: AppScan Issue Gateway - NodeJS
+*********************************************************************
+========
+LICENSES
+========
+Licensed under MIT
+License terms can be found at: https://github.com/ElyDotDev/windows-kill?tab=MIT-1-ov-file#readme
+
+License Text Under Appendix
+
+
+
+==========
+COPYRIGHTS
+==========
+Unspecified Copyright
+Reviewed by the WhiteSource Research Team
+Library copyrights could not be established
+
+
+
+
+=========================
+APPENDIX: License Details
+=========================
+
+***
+ISC
+***
+License Text:
+ISC License:
+
+Copyright (c) 2004-2010 by Internet Systems Consortium, Inc. ("ISC")
+Copyright (c) 1995-2003 by Internet Software Consortium
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+
+
+
+*****
+BSD 2
+*****
+License Text:
+Copyright (c) 2015, Scott Motte
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+
+**********
+Apache 2.0
+**********
+License Text:
+Copyright 2015 Gareth Jones (with contributions from many other people)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+
+
+
+***
+MIT
+***
+License Text:
+
+The MIT License (MIT)
+
+Copyright (c) 2018 Scott IT London
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+
+
+
