@@ -18,6 +18,9 @@
 
 const FormData = require("form-data");
 const axios = require('axios').default;
+const log4js = require("log4js");
+const logger = log4js.getLogger("util");
+const constants = require("./constants");
 var methods = {};
 
 methods.httpCall = async function (method, token, url, data, etag, headers) {
@@ -34,9 +37,10 @@ methods.httpCall = async function (method, token, url, data, etag, headers) {
 }
 
 const httpASEConfig = function (token, method, url, data, etag, headers) {
-  return {
+  const allowUntrusted = String(process.env.ALLOW_UNTRUSTED_CERTIFICATES || '').toLowerCase() === 'true';
+  const config = {
     method: method,
-    url: `${process.env.APPSCAN_URL}${url}`,
+    url: `${getAppScanUrl()}${url}`,
     data: data,
     headers: {
       'Content-Type': 'application/json',
@@ -44,14 +48,20 @@ const httpASEConfig = function (token, method, url, data, etag, headers) {
       'asc_xsrf_token': token,
       'If-Match': etag ? etag : '',
       ...headers
-    }
+    },
+    httpAgent: new (require('http').Agent)()
   };
+  if (allowUntrusted) {
+    config.httpsAgent = new (require('https').Agent)({ rejectUnauthorized: false });
+  }
+  return config;
 }
 
 const httpASoCConfig = function (token, method, url, data, etag) {
-  return {
+  const allowUntrusted = String(process.env.ALLOW_UNTRUSTED_CERTIFICATES || '').toLowerCase() === 'true';
+  const config = {
     method: method,
-    url: `${process.env.APPSCAN_URL}${url}`,
+    url: `${getAppScanUrl()}${url}`,
     data: data,
     headers: {
       'Content-Type': 'application/json',
@@ -59,8 +69,13 @@ const httpASoCConfig = function (token, method, url, data, etag) {
       'asc_xsrf_token': token,
       'If-Match': etag ? etag : '',
       'Authorization': "Bearer " + token
-    }
+    },
+    httpAgent: new (require('http').Agent)()
   };
+  if (allowUntrusted) {
+    config.httpsAgent = new (require('https').Agent)({ rejectUnauthorized: false });
+  }
+  return config;
 }
 
 const httpASECall = async (config) => {
@@ -117,11 +132,16 @@ methods.httpImCall = async (config) => {
   try {
     const result = await axios(config);
     return { "code": result.status, "data": result.data };
-  }
+    }
   catch (err) {
     return { "code": err.response.status, "data": err.response.data };
   }
+}
 
+const getAppScanUrl = () => {
+  let url = process.env.APPSCAN_URL;
+  url = url.replace(/\/+$/gm, "");
+  return url;
 }
 
 module.exports = methods;

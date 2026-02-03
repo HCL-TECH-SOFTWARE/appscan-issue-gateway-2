@@ -85,7 +85,7 @@ var constants = {
 	},
 
 	//JIRA APIs
-	JIRA_PING_API: "/rest/api/latest/mypermissions",
+	JIRA_PING_API: "/rest/api/2/myself",
 	JIRA_ATTACH_FILE: "/rest/api/latest/issue/{JIRAID}/attachments",
 	JIRA_CREATE_TICKET: "/rest/api/2/issue",
 	JIRA_UPDATE_TICKET: "/rest/api/2/issue/{JIRAID}",
@@ -117,6 +117,7 @@ var constants = {
 	HASHING_SALT: '1ffcd164fb8efa56604a4425d14c4455',
 	DTS_JIRA: "JIRA",
 	PROVIDERS: ["JIRA"],
+	ASOC_CLIENT_TYPE: "issuegateway-<OS>-<AIG version>"
 };
 
 module.exports = Object.freeze(constants);

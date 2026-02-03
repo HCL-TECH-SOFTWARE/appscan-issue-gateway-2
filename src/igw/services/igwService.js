@@ -48,6 +48,7 @@ methods.asocLogin = async () => {
     var inputData = {};
     inputData["keyId"] = await credentialService.getKeyId();
     inputData["keySecret"] = await credentialService.getKeySecret();
+    inputData["clientType"] = getClientType();
     
     if (!inputData["keyId"] || !inputData["keySecret"]) {
         throw new Error("AppScan credentials not found in secure storage. Please set them first.");
@@ -55,6 +56,17 @@ methods.asocLogin = async () => {
     
     const result = await asocAuthService.keyLogin(inputData);
     return result.data.Token;
+}
+
+const getClientType = () => {
+    const aigVersion = getAIGVersion();
+    const os = process.platform;
+    return constants.ASOC_CLIENT_TYPE.replace("<OS>", os).replace("<AIG version>", aigVersion);
+}
+
+const getAIGVersion = () => {
+  const packageJson = require('../../../package.json');
+  return packageJson.version;
 }
 
 methods.getCompletedScans = async (syncInterval, aseToken) => {

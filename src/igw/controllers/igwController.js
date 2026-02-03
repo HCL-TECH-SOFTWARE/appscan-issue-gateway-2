@@ -304,7 +304,7 @@ const startCron = async (providerId, syncinterval) => {
                     const token = await appscanLoginController();
                     let appName = scan.AppName || ''
                     if (typeof token === 'undefined') {
-                        logger.error(`Failed to login to the ${process.env.APPSCAN_PROVIDER}. Either the token is invalid or expired. Please check credentials in .env file and try again.`);
+                        logger.error(`Failed to login to the ${process.env.APPSCAN_PROVIDER}. The token may be invalid or expired. To resolve this, please verify your credentials by running:\n\n    npm run credentials verify\n\nIf the problem persists, check your .env file and try again.`);
 
                     }
                     else {
@@ -389,7 +389,7 @@ const processImUpdate = async (res, imConfig, bidrectionalMapping, token, provid
 const startStatusSyncCron = async (providerId, syncinterval) => {
     const token = await appscanLoginController();
     if (!token) {
-        logger.error(`Failed to login to the ${process.env.APPSCAN_PROVIDER}. Either the token is invalid or expired. Please check credentials in .env file and try again.`);
+        logger.error(`Failed to login to the ${process.env.APPSCAN_PROVIDER}. The token may be invalid or expired. To resolve this, please verify your credentials by running:\n\n    npm run credentials verify\n\nIf the problem persists, check your .env file and try again.`);
         return;
     }
 

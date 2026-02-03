@@ -196,8 +196,6 @@ const replacePlaceholders = (template, issue) => {
 
 const createPayload = async (issue, imConfigObject, applicationId, applicationName) => {
 
-    // console.log(issue)
-
     var payload = {};
     var attrMap = {};
     attrMap["project"] = { "key": imConfigObject.improjectkey[applicationId] == undefined ? imConfigObject.improjectkey['default'] : imConfigObject.improjectkey[applicationId] };
@@ -371,6 +369,42 @@ methods.validateJiraFieldIds = async (imConfigObject) => {
     }
 };
 
+methods.validateJiraUrlCredentials = async ({ imurl, imUserName, imPassword }) => {
+    const axios = require('axios');
+    // Remove trailing slash from URL
+    const baseUrl = imurl.replace(/\/+$/, '');
+    const url = baseUrl + constants.JIRA_PING_API;
+    const auth = Buffer.from(`${imUserName}:${imPassword}`).toString('base64');
+
+    logger.info(`Validating Jira credentials for URL: ${url}`);
+    logger.info(`Username: ${imUserName}`);
+
+    try {
+        const response = await axios({
+            method: 'GET',
+            url: url,
+            headers: {
+                'Authorization': `Basic ${auth}`,
+                'Accept': 'application/json'
+            },
+            timeout: 30000
+        });
+
+        logger.info(`Jira validation successful for user: ${response.data?.displayName || imUserName}`);
+        return true;
+    } catch (error) {
+        // Handle specific failure types
+        if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+            logger.error(`Unable to reach the Jira URL (${imurl}). Please verify the URL and your network connection.`);
+        } else if (error.response?.status === 401 || error.response?.status === 403) {
+            logger.error('Jira credentials (imUserName or imPassword) are invalid. For Jira Cloud, use email + API token.');
+        } else {
+            logger.error(`Jira validation failed: ${error.message}`);
+        }
+        logger.error(`Error details: ${JSON.stringify(error?.response?.data)}`);
+        return false;
+    }
+};
 
 const getConfig = function (method, token, url, data) {
     return {
@@ -383,7 +417,7 @@ const getConfig = function (method, token, url, data) {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'X-Atlassian-Token': 'nocheck'
-        }
+    }
     };
 }
 

@@ -61,6 +61,13 @@ methods.getImConfigObject = async (providerId) => {
 methods.validateImConfig = async (providerId, imConfig) => {
     try {
         var imConfigObj = JSON.parse(imConfig);
+
+        const isValidCredentials = await jiraService.validateJiraUrlCredentials(imConfigObj);
+
+        if (!isValidCredentials) {
+            return false;
+        }
+
         const requiredFields = [
             'maxissues', 'issuestates', 'issueseverities', 'imurl', 'imUserName', 'imPassword',
             'improjectkey', 'imissuetype', 'imSummary', 'severityPriorityMap', 'attributeMappings'
