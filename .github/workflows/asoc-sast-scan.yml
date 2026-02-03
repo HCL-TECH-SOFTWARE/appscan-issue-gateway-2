@@ -6,7 +6,8 @@ permissions:
 
 on:
   pull_request:
-    branches: '**'
+    branches: [main]
+    types: [opened, synchronize]
 
 jobs:
   scan:
