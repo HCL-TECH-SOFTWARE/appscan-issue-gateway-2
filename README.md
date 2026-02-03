@@ -29,6 +29,7 @@ To install the application:
    
    Note: The `keyId` and `keySecret` are no longer stored in the .env file. They are now managed using the secure credential system.
    - `APPSCAN_TIMEZONE` : Your local time zone (for example, by default, keep it 00:00)
+   - `ALLOW_UNTRUSTED_CERTIFICATES` : Set to true to allow untrusted SSL certificates (not recommended for production)
    - `SECURE_PORT`: The port the gateway application listens to
    - `SSL_PFX_CERT_FILE`: The path to the certificate in PFX forma
    - `SSL_PFX_CERT_PASSPHRASE`: The certificate passphrase or password

@@ -15,6 +15,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
+
       - name: Run AppScan SAST scan
         id: appscan
         uses: HCL-TECH-SOFTWARE/appscan-sast-action@v1.0.7
@@ -22,6 +26,7 @@ jobs:
           asoc_key: ${{ secrets.ASOC_KEY }}
           asoc_secret: ${{ secrets.ASOC_SECRET }}
           application_id: ${{ secrets.ASOC_APP_ID }}
+          scan_name: "SAST ${{ steps.date.outputs.date }} appscan-issue-gateway-2"
           static_analysis_only: true
           wait_for_analysis: true
           fail_for_noncompliance: true
