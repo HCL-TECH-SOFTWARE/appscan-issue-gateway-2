@@ -581,18 +581,6 @@ const getFormatedDate = (date) => {
     return formattedDateTime;
 }
 
-getCommentsOfIssue = async (issueId, token) => {
-    var issues = [];
-    try {
-        const result = process.env.APPSCAN_PROVIDER == 'ASE' ? '' : await fetchAllData(asocIssueService.getCommentsOfIssue, token, 200, [issueId]);
-        if (result.code === 200) issues = result.data;
-        else logger.error(`Failed to get comments of issue ${issueId}`);
-    } catch (error) {
-        logger.error(`Fetching comments of issue ${issueId} failed with error ${error}`);
-    }
-    return issues;
-}
-
 const getIssuesOfScan = async (scanId, applicationId, token) => {
     var issues = [];
     try {
@@ -607,7 +595,10 @@ const getIssuesOfScan = async (scanId, applicationId, token) => {
 
 const updateIssuesOfApplication = async (issueId, applicationId, status, comment, externalid, token) => {
     try {
-        const token = await appscanLoginController();
+        if(!token)
+        {
+            token = await appscanLoginController();
+        }
         let etag = ''
         if (process.env.APPSCAN_PROVIDER == 'ASE') {
             const issueData = await getIssueDetails(applicationId, issueId, token);
