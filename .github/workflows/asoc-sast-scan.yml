@@ -1,0 +1,28 @@
+name: "HCL AppScan SAST"
+
+permissions:
+  statuses: write
+  contents: read
+
+on:
+  pull_request:
+    branches: '**'
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run AppScan SAST scan
+        id: appscan
+        uses: HCL-TECH-SOFTWARE/appscan-sast-action@v1.0.7
+        with:
+          asoc_key: ${{ secrets.ASOC_KEY }}
+          asoc_secret: ${{ secrets.ASOC_SECRET }}
+          application_id: ${{ secrets.ASOC_APP_ID }}
+          static_analysis_only: true
+          wait_for_analysis: true
+          fail_for_noncompliance: true
+          failure_threshold: High
