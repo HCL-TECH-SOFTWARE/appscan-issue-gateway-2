@@ -37,7 +37,21 @@ var methods = {};
 
 methods.igwLogin = async (req, res) => {
     try {
-        const { adminEmail, adminPassword } = req.body;
+        // Explicitly extract only allowed fields to prevent mass assignment
+        const allowedLoginFields = ['adminEmail', 'adminPassword'];
+        const receivedFields = Object.keys(req.body);
+        const unexpectedFields = receivedFields.filter(field => !allowedLoginFields.includes(field));
+        
+        if (unexpectedFields.length > 0) {
+            logger.warn(`Login attempt with unexpected fields: ${unexpectedFields.join(', ')}`);
+            return res.status(400).json({ "message": "Invalid request: unexpected fields provided" });
+        }
+
+        const sanitizedBody = {
+            adminEmail: req.body.adminEmail,
+            adminPassword: req.body.adminPassword
+        };
+        const { adminEmail, adminPassword } = sanitizedBody;
         var passwordHash = crypto.pbkdf2Sync(adminPassword, constants.HASHING_SALT, 1000, 64, 'sha512').toString('hex');
 
         if (adminEmail == process.env.LOCAL_ADMIN_USER && passwordHash === process.env.ADMIN_USER_PASSWORD) {
@@ -73,7 +87,42 @@ methods.createConfig = (req, res) => {
         return res.status(404).send("Provider does not exist.");
     }
 
-    fs.writeFile(imFilePath, JSON.stringify(req.body, null, 4), 'utf8', function (err) {
+    // Explicitly extract only allowed fields to prevent mass assignment vulnerability
+    const allowedFields = [
+        'maxissues',
+        'issuestates',
+        'issueseverities',
+        'imurl',
+        'imUserName',
+        'imPassword',
+        'improjectkey',
+        'imissuetype',
+        'imSummary',
+        'isScanTicket',
+        'severityPriorityMap',
+        'attributeMappings',
+        'jiraToAppScanStatusMapping',
+        'jiraStatusIdMapping',
+        'appScanToJiraStatusMapping'
+    ];
+
+    // Reject requests with unexpected fields
+    const receivedFields = Object.keys(req.body);
+    const unexpectedFields = receivedFields.filter(field => !allowedFields.includes(field));
+    
+    if (unexpectedFields.length > 0) {
+        logger.warn(`Config update attempt with unexpected fields: ${unexpectedFields.join(', ')}`);
+        return res.status(400).json({ "message": "Invalid request: unexpected fields provided" });
+    }
+
+    const sanitizedConfig = {};
+    allowedFields.forEach(field => {
+        if (req.body[field] !== undefined) {
+                sanitizedConfig[field] = req.body[field];
+        }
+    });
+
+    fs.writeFile(imFilePath, JSON.stringify(sanitizedConfig, null, 4), 'utf8', function (err) {
         if (err) {
             logger.error(`Writing config file failed with error ${err}`);
             return res.status(500).json(err);
