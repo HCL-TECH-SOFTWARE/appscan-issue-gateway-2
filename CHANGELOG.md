@@ -3,7 +3,6 @@ Release Summary
 1.1.2 (February 2026)
 ------
 * Fixed security vulnerabilities
-* Bug fixes
 
 1.1.1 (December 2025)
 ------

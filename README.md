@@ -2,7 +2,7 @@
 
 The `appscan-issue-gateway-v2` facilitates issue synchronization between AppScan (AppScan on Cloud, AppScan 360°, and AppScan Enterprise) and Jira. This capability enables AppScan users to transfer security issue data to other systems, eliminating the need for custom scripting and manual integration. This service operates as a REST API. You can invoke it for issue processing in automated scanning workflows.
 
-> **SECURITY UPDATE**: This version introduces secure credential storage using the system's native credential managers (Windows Credential Manager, macOS Keychain, or Linux Secret Service API). All sensitive information, including AppScan credentials and encryption keys, is now stored securely in your system's native credential store. Update your configuration to use the new secure credential management system.
+> **SECURITY UPDATE**: This application includes secure credential storage using the system's native credential managers (Windows Credential Manager, macOS Keychain, or Linux Secret Service API). All sensitive information, including AppScan credentials and encryption keys, is now stored securely in your system's native credential store. Update your configuration to use the new secure credential management system.
 
 ## Prerequisites
 Before you begin, ensure you have:
@@ -12,7 +12,7 @@ Before you begin, ensure you have:
    - HCL AppScan Enterprise version 10.x or later
    - AppScan on Cloud
    - AppScan 360° version 1.3 or later
-3. A supported Issue Management system: Jira
+3. A supported Issue Management system: Jira (on-premises)
 
 ## Installation steps
 
