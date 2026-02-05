@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2025 HCL America, Inc.
+ * Copyright 2025,2026 HCL America, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,21 @@ var methods = {};
 
 methods.igwLogin = async (req, res) => {
     try {
-        const { adminEmail, adminPassword } = req.body;
+        // Explicitly extract only allowed fields to prevent mass assignment
+        const allowedLoginFields = ['adminEmail', 'adminPassword'];
+        const receivedFields = Object.keys(req.body);
+        const unexpectedFields = receivedFields.filter(field => !allowedLoginFields.includes(field));
+        
+        if (unexpectedFields.length > 0) {
+            logger.warn(`Login attempt with unexpected fields: ${unexpectedFields.join(', ')}`);
+            return res.status(400).json({ "message": "Invalid request: unexpected fields provided" });
+        }
+
+        const sanitizedBody = {
+            adminEmail: req.body.adminEmail,
+            adminPassword: req.body.adminPassword
+        };
+        const { adminEmail, adminPassword } = sanitizedBody;
         var passwordHash = crypto.pbkdf2Sync(adminPassword, constants.HASHING_SALT, 1000, 64, 'sha512').toString('hex');
 
         if (adminEmail == process.env.LOCAL_ADMIN_USER && passwordHash === process.env.ADMIN_USER_PASSWORD) {
@@ -73,7 +87,42 @@ methods.createConfig = (req, res) => {
         return res.status(404).send("Provider does not exist.");
     }
 
-    fs.writeFile(imFilePath, JSON.stringify(req.body, null, 4), 'utf8', function (err) {
+    // Explicitly extract only allowed fields to prevent mass assignment vulnerability
+    const allowedFields = [
+        'maxissues',
+        'issuestates',
+        'issueseverities',
+        'imurl',
+        'imUserName',
+        'imPassword',
+        'improjectkey',
+        'imissuetype',
+        'imSummary',
+        'isScanTicket',
+        'severityPriorityMap',
+        'attributeMappings',
+        'jiraToAppScanStatusMapping',
+        'jiraStatusIdMapping',
+        'appScanToJiraStatusMapping'
+    ];
+
+    // Reject requests with unexpected fields
+    const receivedFields = Object.keys(req.body);
+    const unexpectedFields = receivedFields.filter(field => !allowedFields.includes(field));
+    
+    if (unexpectedFields.length > 0) {
+        logger.warn(`Config update attempt with unexpected fields: ${unexpectedFields.join(', ')}`);
+        return res.status(400).json({ "message": "Invalid request: unexpected fields provided" });
+    }
+
+    const sanitizedConfig = {};
+    allowedFields.forEach(field => {
+        if (req.body[field] !== undefined) {
+                sanitizedConfig[field] = req.body[field];
+        }
+    });
+
+    fs.writeFile(imFilePath, JSON.stringify(sanitizedConfig, null, 4), 'utf8', function (err) {
         if (err) {
             logger.error(`Writing config file failed with error ${err}`);
             return res.status(500).json(err);
@@ -304,7 +353,7 @@ const startCron = async (providerId, syncinterval) => {
                     const token = await appscanLoginController();
                     let appName = scan.AppName || ''
                     if (typeof token === 'undefined') {
-                        logger.error(`Failed to login to the ${process.env.APPSCAN_PROVIDER}. Either the token is invalid or expired. Please check credentials in .env file and try again.`);
+                        logger.error(`Failed to login to the ${process.env.APPSCAN_PROVIDER}. The token may be invalid or expired. To resolve this, please verify your credentials by running:\n\n    npm run credentials verify\n\nIf the problem persists, check your .env file and try again.`);
 
                     }
                     else {
@@ -389,7 +438,7 @@ const processImUpdate = async (res, imConfig, bidrectionalMapping, token, provid
 const startStatusSyncCron = async (providerId, syncinterval) => {
     const token = await appscanLoginController();
     if (!token) {
-        logger.error(`Failed to login to the ${process.env.APPSCAN_PROVIDER}. Either the token is invalid or expired. Please check credentials in .env file and try again.`);
+        logger.error(`Failed to login to the ${process.env.APPSCAN_PROVIDER}. The token may be invalid or expired. To resolve this, please verify your credentials by running:\n\n    npm run credentials verify\n\nIf the problem persists, check your .env file and try again.`);
         return;
     }
 
@@ -581,18 +630,6 @@ const getFormatedDate = (date) => {
     return formattedDateTime;
 }
 
-getCommentsOfIssue = async (issueId, token) => {
-    var issues = [];
-    try {
-        const result = process.env.APPSCAN_PROVIDER == 'ASE' ? '' : await fetchAllData(asocIssueService.getCommentsOfIssue, token, 200, [issueId]);
-        if (result.code === 200) issues = result.data;
-        else logger.error(`Failed to get comments of issue ${issueId}`);
-    } catch (error) {
-        logger.error(`Fetching comments of issue ${issueId} failed with error ${error}`);
-    }
-    return issues;
-}
-
 const getIssuesOfScan = async (scanId, applicationId, token) => {
     var issues = [];
     try {
@@ -607,7 +644,10 @@ const getIssuesOfScan = async (scanId, applicationId, token) => {
 
 const updateIssuesOfApplication = async (issueId, applicationId, status, comment, externalid, token) => {
     try {
-        const token = await appscanLoginController();
+        if(!token)
+        {
+            token = await appscanLoginController();
+        }
         let etag = ''
         if (process.env.APPSCAN_PROVIDER == 'ASE') {
             const issueData = await getIssueDetails(applicationId, issueId, token);

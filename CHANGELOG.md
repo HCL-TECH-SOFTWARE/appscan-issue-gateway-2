@@ -1,5 +1,9 @@
 Release Summary
 =========
+1.1.2 (February 2026)
+------
+* Fixed security vulnerabilities
+
 1.1.1 (December 2025)
 ------
 * Enhanced credential management with native OS credential storage integration for improved security.

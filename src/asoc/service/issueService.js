@@ -45,11 +45,6 @@ methods.getIssuesOfScan = async (token, skipValue, scanId) => {
     return await util.httpCall("GET", token, url);
 };
 
-methods.getCommentsOfIssue = async (token, skipValue, issueId) => {
-    const url = constants.ASoC_ISSUE_COMMENTS.replace("{ISSUEID}", issueId).replace('${skipValue}', skipValue);
-    return await util.httpCall("GET", token, url);
-};
-
 methods.getScanDetails = async (scanId, technology, token) => {
     const url = technology == 'DynamicAnalyzer' ? constants.DAST_SCAN_DATA.replace("{SCANID}", scanId) : technology == 'StaticAnalyzer' ? constants.SAST_SCAN_DATA.replace("{SCANID}", scanId) : technology == "ScaAnalyzer" ? constants.SCA_SCAN_DATA.replace("{SCANID}", scanId) : constants.IAST_SCAN_DATA.replace("{SCANID}", scanId);
     return await util.httpCall("GET", token, url);
@@ -160,30 +155,6 @@ methods.downloadAsocReport = async (providerId, appId, scanId, issues, token) =>
                 }
             )
         }
-
-        // async function splitFile() {
-        //     return new Promise((resolve, reject) => {
-        //         let intervalid = setInterval(async () => {
-        //             try {
-        //                 let getDownloadUrl = await util.httpCall("GET", token, getReportStatusUrl);
-
-        //                 if (getDownloadUrl.data.Status === 'Ready') {
-        //                     let downloadFileData = await util.downloadFile(getDownloadReportsUrl, downloadPath, token);
-
-        //                     if (downloadFileData) {
-        //                         let res = await igwService.splitHtmlFile(downloadPath, appId);
-        //                         clearInterval(intervalid);
-        //                         resolve(res);
-        //                     }
-        //                 }
-        //             } catch (error) {
-        //                 clearInterval(intervalid);
-        //                 reject(error);
-        //             }
-        //         }, 3000);
-        //     });
-        // }
-
         let splitFiles = await splitFile();
         return splitFiles;
     } catch (err) {

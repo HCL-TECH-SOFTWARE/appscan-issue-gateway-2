@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2025 HCL America, Inc.
+ * Copyright 2025,2026 HCL America, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,13 @@ methods.getImConfigObject = async (providerId) => {
 methods.validateImConfig = async (providerId, imConfig) => {
     try {
         var imConfigObj = JSON.parse(imConfig);
+
+        const isValidCredentials = await jiraService.validateJiraUrlCredentials(imConfigObj);
+
+        if (!isValidCredentials) {
+            return false;
+        }
+
         const requiredFields = [
             'maxissues', 'issuestates', 'issueseverities', 'imurl', 'imUserName', 'imPassword',
             'improjectkey', 'imissuetype', 'imSummary', 'severityPriorityMap', 'attributeMappings'
