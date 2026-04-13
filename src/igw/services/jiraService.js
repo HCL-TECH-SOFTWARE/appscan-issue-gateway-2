@@ -49,17 +49,6 @@ methods.createTickets = async (issues, imConfigObject, applicationId, applicatio
             await delay(3000);
             if (result.code === 201) {
                 const imTicket = imConfigObject.imurl + "/browse/" + result.data.key;
-                // //if the issue is status is Noise then update the status of corresponding Jira ticket to False Positive
-                // if (issues[i].Status === "Noise") {
-                //     const transitionData = {
-                //         "transition": {
-                //             "id": `${imConfigObject.jiraStatusIdMapping["False Positive"]}`
-                //         }
-                //     }
-                //     await methods.updateImStatus(imConfigObject, transitionData, result.data.key);
-                //     //This global set is used to keep track of the issues that are already transitioned so that we don't transition them again in the status sync job
-                //     alreadyTransitionedIssues.add(issues[i].id);
-                // }
 
                 //create Jira issue property to indentify the issues created by AppScan
                 await methods.createJiraIssueProperty(imConfigObject, result.data.key);
@@ -203,7 +192,7 @@ const createPayload = async (issue, imConfigObject, applicationId, applicationNa
     attrMap["summary"] = replacePlaceholders(imConfigObject.imSummary, issue);
 
 
-    attrMap["description"] = JSON.stringify(issue, null, 4);
+    attrMap["description"] = toADF(JSON.stringify(issue, null, 4));
     const attributeMappings = typeof imConfigObject.attributeMappings != 'undefined' ? imConfigObject.attributeMappings : [];
 
     for (var i = 0; i < attributeMappings.length; i++) {
@@ -258,7 +247,7 @@ const createScanPayload = async (issue, imConfigObject, applicationId, applicati
     else {
         attrMap["summary"] = "Security issue: " + scanId + ' ' + discoveryMethod + " found by AppScan";
     }
-    attrMap["description"] = JSON.stringify(issue, null, 4);
+    attrMap["description"] = toADF(JSON.stringify(issue, null, 4));
     const attributeMappings = typeof imConfigObject.attributeMappings != 'undefined' ? imConfigObject.attributeMappings : [];
     let labelName = applicationName.trim();
     labelName = labelName.split(/\s+/).join('_')
@@ -303,12 +292,13 @@ methods.attachIssueDataFile = async (ticket, filePath, imConfigObject) => {
     const imConfig = getConfig("POST", basicToken, url, formData);
     imConfig.headers = {
         ...imConfig.headers,
-        ...formData.getHeaders()
+        ...formData.getHeaders(),
+        'X-Atlassian-Token': 'nocheck'
     };
     return await util.httpImCall(imConfig);
 }
 
-methods.getMarkedTickets = async (syncInterval, imConfigObject) => {
+methods.getMarkedTickets = async (syncInterval, imConfigObject, nextPageToken) => {
 
     const imStatus = Object.keys(imConfigObject.jiraToAppScanStatusMapping);
     let jql = "";
@@ -319,7 +309,10 @@ methods.getMarkedTickets = async (syncInterval, imConfigObject) => {
     jql = encodeURIComponent(jql);
 
     // const url = imConfigObject.imurl + constants.JIRA_LATEST_ISSUE.replace("{SYNCINTERVAL}", syncInterval)
-    const url = imConfigObject.imurl + constants.JIRA_ISSUE_SEARCH + jql;
+    let url = imConfigObject.imurl + constants.JIRA_ISSUE_SEARCH + jql + `&fields=description,status&maxResults=5000`;
+    if (nextPageToken) {
+        url += `&nextPageToken=${encodeURIComponent(nextPageToken)}`;
+    }
     let userData = imConfigObject.imUserName + ":" + imConfigObject.imPassword;
     var basicToken = `Basic ${Buffer.from(userData).toString('base64')}`;
     const imConfig = getConfig("GET", basicToken, url, "");
@@ -407,18 +400,20 @@ methods.validateJiraUrlCredentials = async ({ imurl, imUserName, imPassword }) =
 };
 
 const getConfig = function (method, token, url, data) {
-    return {
+    const hasBody = data !== undefined && data !== null && data !== '';
+    const config = {
         method: method,
         url: url,
-        data: data,
-        rejectUnauthorized: false,
         headers: {
             'Authorization': token,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-Atlassian-Token': 'nocheck'
-    }
+            'Accept': 'application/json'
+        }
     };
+    if (hasBody) {
+        config.data = data;
+        config.headers['Content-Type'] = 'application/json';
+    }
+    return config;
 }
 
 const getApplicationDetails = async (appId, token) => {
@@ -448,5 +443,17 @@ const getApplicationMnemonic = (data) => {
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+const toADF = (text) => ({
+    type: "doc",
+    version: 1,
+    content: [
+        {
+            type: "codeBlock",
+            attrs: { language: "json" },
+            content: [{ type: "text", text: text }]
+        }
+    ]
+});
 
 module.exports = methods;

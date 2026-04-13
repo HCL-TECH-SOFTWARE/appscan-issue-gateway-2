@@ -61,7 +61,8 @@ methods.asocLogin = async () => {
 const getClientType = () => {
     const aigVersion = getAIGVersion();
     const os = process.platform;
-    return constants.ASOC_CLIENT_TYPE.replace("<OS>", os).replace("<AIG version>", aigVersion);
+    const clientType = process.env.APPSCAN_PROVIDER == "A360" ? constants.A360_CLIENT_TYPE.replace("<AIG version>", aigVersion) : constants.ASOC_CLIENT_TYPE.replace("<OS>", os).replace("<AIG version>", aigVersion);
+    return clientType;
 }
 
 const getAIGVersion = () => {
@@ -152,7 +153,26 @@ methods.createImScanTickets = async (filteredIssues, imConfig, providerId, appli
 methods.getLatestImTickets = async (providerId, syncInterval, imConfig) => {
     var result;
     if (providerId === constants.DTS_JIRA) {
-        result = await jiraService.getMarkedTickets(syncInterval, imConfig);
+        let allIssues = [];
+        let nextPageToken = null;
+        let isLast = false;
+
+        while (!isLast) {
+            const response = await jiraService.getMarkedTickets(syncInterval, imConfig, nextPageToken);
+            if (response.code < 200 || response.code > 299) {
+                return response;
+            }
+            const issues = response.data.issues || [];
+            allIssues = allIssues.concat(issues);
+
+            if (response.data.isLast === false && response.data.nextPageToken) {
+                nextPageToken = response.data.nextPageToken;
+            } else {
+                isLast = true;
+            }
+        }
+
+        result = { code: 200, data: { issues: allIssues, total: allIssues.length } };
     }
     return result;
 }

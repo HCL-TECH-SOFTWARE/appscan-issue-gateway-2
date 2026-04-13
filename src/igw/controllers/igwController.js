@@ -322,7 +322,7 @@ const getLatestProviderTickets = async (providerId, period) => {
         if (result.code < 200 || result.code > 299) logger.error(`Failed to fetch provider tickets ${result.data}`);
         else {
             completedScans = (result.data) ? result.data : [];
-            logger.info(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Found ${completedScans.total || 0} updated ${providerId} tickets in last ${period}`);
+            logger.info(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Found ${completedScans.issues.length || 0} updated ${providerId} tickets in last ${period}`);
         }
     } catch (error) {
         logger.error(`Failed to fetch updated tickets from ${providerId}. ${error}`);
@@ -399,7 +399,7 @@ const startProviderCron = async (providerId, syncinterval) => {
 
         const providerTickets = await getLatestProviderTickets(providerId, syncinterval);
 
-        if (providerTickets?.total > 0) {
+        if (providerTickets?.issues.length > 0) {
             if (process.env.APPSCAN_PROVIDER === 'ASE') {
                 for (const res of providerTickets.issues) {
                     await processImUpdate(res, imConfig, bidrectionalMapping, token, providerId);
@@ -419,8 +419,9 @@ const startProviderCron = async (providerId, syncinterval) => {
 
 const processImUpdate = async (res, imConfig, bidrectionalMapping, token, providerId) => {
     const jiraIssueProperty = await igwService.getJiraIssueProperty(res.key, imConfig);
+    
     if (jiraIssueProperty && jiraIssueProperty.value && jiraIssueProperty.value.createdBy === 'appScan') {
-        let description = JSON.parse(res.fields.description);
+        let description = JSON.parse(res.fields.description?.content?.[0]?.content?.[0]?.text);
         let issueId = process.env.APPSCAN_PROVIDER === 'ASE' ? description.id : description.Id;
         let applicationId = description.ApplicationId;
         try {
@@ -542,6 +543,40 @@ const getPaginatedASEIssues = async (applicationId, token) => {
     return response;
 };
 
+const getPaginatedASEIssuesByStatusAndTime = async (applicationId, token, status, fromDateTime, toDateTime) => {
+    const response = { data: [] };
+    let offset = 0;
+    const limit = 100;
+    let totalItems = 0;
+
+    try {
+        do {
+            const res = await issueService.getIssuesOfApplicationByStatusAndTime(applicationId, token, status, fromDateTime, toDateTime, { 'Range': `items=${offset}-${offset + limit - 1}` });
+            response.code = res.code;
+
+            if (res.code === 200) {
+                const contentRange = res.headers['content-range'];
+                if (contentRange) {
+                    const match = contentRange.match(/items (\d+)-(\d+)\/(\d+)/);
+                    if (match) {
+                        totalItems = parseInt(match[3], 10);
+                    }
+                }
+                response.data.push(...res.data);
+                offset += limit;
+            } else {
+                logger.error(`Failed to get issues of application ${applicationId} by status and time`);
+                break;
+            }
+        } while (offset < totalItems);
+    } catch (error) {
+        logger.error(`Fetching issues of application ${applicationId} by status and time failed with error ${error}`);
+        response.code = 500;
+    }
+
+    return response;
+};
+
 const getIssuesOfApplication = async (applicationId, token) => {
     var issues = [];
     try {
@@ -566,7 +601,7 @@ const getIssuesOfApplicationByStatusAndTime = async (applicationId, token, statu
         if (process.env.APPSCAN_PROVIDER == 'ASE') {
             const fromDateTime = parseTimeToDateTime(time, 'local');
             const toDateTime = getFormatedDate(new Date());
-            result = await issueService.getIssuesOfApplicationByStatusAndTime(applicationId, token, status, fromDateTime, toDateTime);
+            result = await getPaginatedASEIssuesByStatusAndTime(applicationId, token, status, fromDateTime, toDateTime);
         }
         else if (process.env.APPSCAN_PROVIDER == 'A360') {
             let fromDateTime = parseTimeToDateTime(time, 'utc');

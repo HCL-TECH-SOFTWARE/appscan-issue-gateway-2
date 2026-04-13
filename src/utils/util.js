@@ -134,8 +134,10 @@ methods.httpImCall = async (config) => {
     return { "code": result.status, "data": result.data };
     }
   catch (err) {
-    return { "code": err.response.status, "data": err.response.data };
-  }
+  const status = err?.response?.status ?? 500;
+  const data   = err?.response?.data   ?? (err?.message || 'Unknown error');
+  return { "code": status, "data": data };
+}
 }
 
 const getAppScanUrl = () => {
