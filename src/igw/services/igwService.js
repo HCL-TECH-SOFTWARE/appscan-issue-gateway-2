@@ -61,6 +61,7 @@ methods.asocLogin = async () => {
 const getClientType = () => {
     const aigVersion = getAIGVersion();
     const os = process.platform;
+    //For A360, client type will be in format AppScan-issue-gateway-2-AIGVersion since A360 doesn't require OS info becuase of FED requirements.
     const clientType = process.env.APPSCAN_PROVIDER == "A360" ? constants.A360_CLIENT_TYPE.replace("<AIG version>", aigVersion) : constants.ASOC_CLIENT_TYPE.replace("<OS>", os).replace("<AIG version>", aigVersion);
     return clientType;
 }
