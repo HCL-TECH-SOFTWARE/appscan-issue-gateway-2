@@ -47,7 +47,7 @@ var constants = {
 	ASoC_API_KEYLOGIN: "/api/v4/Account/ApiKeyLogin",
 	ASoC_JOB_SEARCH: '/api/v4/Scans?%24top=500&%24skip=${skipValue}&%24count=true',
 	ASoC_ISSUES_APPLICATION: "/api/v4/Issues/Application/{APPID}?applyPolicies=None&%24top=500&%24skip=${skipValue}&%24count=true",
-	ASoC_ISSUES_APPLICATION_STATUS_TIME: "/api/v4/Issues/Application/{APPID}?applyPolicies=None&%24top=100&%24filter=%28%28{STATUS}%29%20and%20%28LastUpdated%20gt%20{DATERANGE}%29%29&%24count=true",
+	ASoC_ISSUES_APPLICATION_STATUS_TIME: "/api/v4/Issues/Application/{APPID}?applyPolicies=None&%24top=500&%24skip=${skipValue}&%24filter=%28%28{STATUS}%29%20and%20%28LastUpdated%20gt%20{DATERANGE}%29%29&%24count=true",
 	ASoC_APPLICATION_DETAILS: "/api/v4/Apps?%24filter=Id%20eq%20{APPID}&%24count=false",
 	ASoC_ISSUE_DETAILS: "/api/v4/Issues/{ISSUEID}",
 	ASoC_ISSUE_COMMENTS: "/api/v4/Issues/{ISSUEID}/Comments?%24top=500&%24skip=${skipValue}&%24count=true",

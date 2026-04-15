@@ -3,7 +3,7 @@ Release Summary
 1.1.3 (April 2026)
 ------
 * Fixed security vulnerabilities
-* Included support for Jira Cloud and depracated support for Jira Datacenter
+* Included support for Jira Cloud and deprecated support for Jira Datacenter
 
 1.1.2 (February 2026)
 ------

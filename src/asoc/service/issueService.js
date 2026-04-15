@@ -163,7 +163,7 @@ methods.downloadAsocReport = async (providerId, appId, scanId, issues, token) =>
 }
 
 
-methods.getIssuesOfApplicationByStatusAndTime = async (appId, token, status, fromDateTime) => {
+methods.getIssuesOfApplicationByStatusAndTime = async (token, skipValue, appId, status, fromDateTime) => {
     try {
         const formattedFromDateTime = fromDateTime.replace(/:/g, "%3A");
 
@@ -179,7 +179,7 @@ methods.getIssuesOfApplicationByStatusAndTime = async (appId, token, status, fro
                 statusString = statusString + `%20or%20Status%20eq%20%27${element}%27`
             }
         });
-        const url = constants.ASoC_ISSUES_APPLICATION_STATUS_TIME.replace("{APPID}", appId).replace("{STATUS}", statusString).replace("{DATERANGE}", formattedFromDateTime);
+        const url = constants.ASoC_ISSUES_APPLICATION_STATUS_TIME.replace("{APPID}", appId).replace("{STATUS}", statusString).replace("{DATERANGE}", formattedFromDateTime).replace('${skipValue}', skipValue);
         return await util.httpCall("GET", token, url);
     }
     catch (err) {
