@@ -123,6 +123,28 @@ To ensure the application restarts automatically when the system boots:
 pm2 startup                  # Generate startup script
 pm2 save                     # Save current configuration
 ```
+##### Windows auto-start setup
+Since PM2 doesn't natively support Windows for its startup hook, use the officially recommended third-party package [pm2-windows-startup](https://www.npmjs.com/package/pm2-windows-startup).
+
+1. Install the Windows startup package globally:
+   ```bash
+   npm install pm2-windows-startup -g
+   ```
+
+2. Initialize the startup script:
+   ```bash
+   pm2-startup install
+   ```
+
+3. Start your application:
+   ```bash
+   pm2 start server.js --name "IssueGateway2" --node-args="--openssl-legacy-provider"
+   ```
+
+4. Save the current PM2 process list (this tells Windows which processes to restore on boot):
+   ```bash
+   pm2 save
+   ```
 
 For more information, visit the [PM2 documentation](https://pm2.keymetrics.io/docs/usage/quick-start/).
 
