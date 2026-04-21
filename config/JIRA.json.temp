@@ -2,7 +2,7 @@
     "maxissues": 1000,
     "issuestates": "New,Open,InProgress,Reopened,Noise",
     "issueseverities": "Critical,High,Medium",
-    "imurl": "<Jira URL>",
+    "imurl": "<Jira URL without trailing / e.g. https://test.atlassian.net>",
     "imUserName": "<username>",
     "imPassword": "<encrypted password or accesstoken. To encrypt the password run the command "node .\cryptoService.js --encrypt <password>" from the base directory.>",
     "imissuetype": "<issue type like task, bug, epic, etc.>",
