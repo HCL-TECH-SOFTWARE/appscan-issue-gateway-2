@@ -22,6 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Check for dependency file changes
+        if: github.event.action == 'synchronize'
         uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -30,32 +31,40 @@ jobs:
               - 'package.json'
               - 'package-lock.json'
 
-      - name: Skip if no dependency changes
-        if: steps.filter.outputs.dependencies != 'true'
-        run: echo "No changes to package.json or package-lock.json, skipping scan."
+      - name: Decide whether to run scan
+        id: decide
+        run: |
+          if [ "${{ github.event.action }}" == "opened" ]; then
+            echo "should_scan=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.filter.outputs.dependencies }}" == "true" ]; then
+            echo "should_scan=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_scan=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to package.json or package-lock.json, skipping scan."
+          fi
 
       - uses: actions/setup-node@v3
-        if: steps.filter.outputs.dependencies == 'true'
+        if: steps.decide.outputs.should_scan == 'true'
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
-        if: steps.filter.outputs.dependencies == 'true'
+        if: steps.decide.outputs.should_scan == 'true'
         run: npm ci
 
       - uses: actions/setup-java@v3
-        if: steps.filter.outputs.dependencies == 'true'
+        if: steps.decide.outputs.should_scan == 'true'
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Download Mend Agent
-        if: steps.filter.outputs.dependencies == 'true'
+        if: steps.decide.outputs.should_scan == 'true'
         run: |
           curl -fsSL https://unified-agent.s3.amazonaws.com/wss-unified-agent-${{ env.MEND_AGENT_VERSION }}.jar -o wss-unified-agent-${{ env.MEND_AGENT_VERSION }}.jar
 
       - name: Run Mend Scan
-        if: steps.filter.outputs.dependencies == 'true'
+        if: steps.decide.outputs.should_scan == 'true'
         env:
           MEND_API_KEY: ${{ secrets.MEND_KEY }}
         run: |
