@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2025 HCL America, Inc.
+ * Copyright 2025,2026 HCL America, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,10 @@ methods.getIssuesOfApplication = async (appId, token, headers) => {
 * @param status - Issue status e.g Noise
 * @param fromDateTime - Start date time e.g 2021-09-01T00:00:00
 * @param toDateTime - End date time e.g. 2021-09-30T23:59:59
+* @param headers - Optional headers including Range for pagination
 * @returns {Promise<*>}
 */
-methods.getIssuesOfApplicationByStatusAndTime = async (appId, token, status, fromDateTime, toDateTime) => {
+methods.getIssuesOfApplicationByStatusAndTime = async (appId, token, status, fromDateTime, toDateTime, headers) => {
     try {
         const appDetails = await methods.getApplicationDetails(appId, token);
         const applicationName = appDetails.data.name.toString().replace(/ /g, "%20");
@@ -52,7 +53,7 @@ methods.getIssuesOfApplicationByStatusAndTime = async (appId, token, status, fro
             statusUrl += `Status%3D${stat}%2C`
         })
         const url = constants.API_ISSUES_APPLICATION_STATUS_TIME.replace("{APPNAME}", applicationName).replace("{STATUS}", statusUrl).replace("{DATERANGE}", dateRange);
-        return await util.httpCall("GET", token, url);
+        return await util.httpCall("GET", token, url, '', '', headers);
     }
     catch (err) {
         logger.error(err);

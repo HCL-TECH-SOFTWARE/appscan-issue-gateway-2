@@ -47,7 +47,7 @@ var constants = {
 	ASoC_API_KEYLOGIN: "/api/v4/Account/ApiKeyLogin",
 	ASoC_JOB_SEARCH: '/api/v4/Scans?%24top=500&%24skip=${skipValue}&%24count=true',
 	ASoC_ISSUES_APPLICATION: "/api/v4/Issues/Application/{APPID}?applyPolicies=None&%24top=500&%24skip=${skipValue}&%24count=true",
-	ASoC_ISSUES_APPLICATION_STATUS_TIME: "/api/v4/Issues/Application/{APPID}?applyPolicies=None&%24top=100&%24filter=%28%28{STATUS}%29%20and%20%28LastUpdated%20gt%20{DATERANGE}%29%29&%24count=true",
+	ASoC_ISSUES_APPLICATION_STATUS_TIME: "/api/v4/Issues/Application/{APPID}?applyPolicies=None&%24top=500&%24skip=${skipValue}&%24filter=%28%28{STATUS}%29%20and%20%28LastUpdated%20gt%20{DATERANGE}%29%29&%24count=true",
 	ASoC_APPLICATION_DETAILS: "/api/v4/Apps?%24filter=Id%20eq%20{APPID}&%24count=false",
 	ASoC_ISSUE_DETAILS: "/api/v4/Issues/{ISSUEID}",
 	ASoC_ISSUE_COMMENTS: "/api/v4/Issues/{ISSUEID}/Comments?%24top=500&%24skip=${skipValue}&%24count=true",
@@ -85,16 +85,16 @@ var constants = {
 	},
 
 	//JIRA APIs
-	JIRA_PING_API: "/rest/api/2/myself",
-	JIRA_ATTACH_FILE: "/rest/api/latest/issue/{JIRAID}/attachments",
-	JIRA_CREATE_TICKET: "/rest/api/2/issue",
-	JIRA_UPDATE_TICKET: "/rest/api/2/issue/{JIRAID}",
-	JIRA_LATEST_ISSUE: "/rest/api/2/search?jql=status=Closed%20AND%20updated%20>=%20-{SYNCINTERVAL}&maxResults=100",
-	JIRA_LABELS_ISSUE: "/rest/api/2/search?jql=project%20=%20{PROJECTNAME}%20AND%20summary%20~%20%27found%20by%20Appscan%27&maxResults=100&startAt={SKIPVALUE}",
-	JIRA_UPDATE_TRANSITION: "/rest/api/2/issue/{JIRAID}/transitions",
-	JIRA_ISSUE_PROPERTY: "/rest/api/2/issue/{JIRAID}/properties/{PROPERTY_KEY}",
-	JIRA_ISSUE_SEARCH: "/rest/api/2/search?jql=",
-	JIRA_GET_FIELDS: "/rest/api/2/field",
+	JIRA_PING_API: "/rest/api/3/myself",
+	JIRA_ATTACH_FILE: "/rest/api/3/issue/{JIRAID}/attachments",
+	JIRA_CREATE_TICKET: "/rest/api/3/issue",
+	JIRA_UPDATE_TICKET: "/rest/api/3/issue/{JIRAID}",
+	JIRA_LATEST_ISSUE: "/rest/api/3/search/jql?jql=status=Closed%20AND%20updated%20>=%20-{SYNCINTERVAL}&maxResults=100",
+	JIRA_LABELS_ISSUE: "/rest/api/3/search/jql?jql=project%20=%20{PROJECTNAME}%20AND%20summary%20~%20%27found%20by%20Appscan%27&maxResults=100&startAt={SKIPVALUE}",
+	JIRA_UPDATE_TRANSITION: "/rest/api/3/issue/{JIRAID}/transitions",
+	JIRA_ISSUE_PROPERTY: "/rest/api/3/issue/{JIRAID}/properties/{PROPERTY_KEY}",
+	JIRA_ISSUE_SEARCH: "/rest/api/3/search/jql?jql=",
+	JIRA_GET_FIELDS: "/rest/api/3/field",
 
 	INVALID_ADMIN_EMAIL: "Invalid admin email",
 	INVALID_ADMIN_PASSWORD: "Invalid admin password",
@@ -117,7 +117,8 @@ var constants = {
 	HASHING_SALT: '1ffcd164fb8efa56604a4425d14c4455',
 	DTS_JIRA: "JIRA",
 	PROVIDERS: ["JIRA"],
-	ASOC_CLIENT_TYPE: "issuegateway-<OS>-<AIG version>"
+	ASOC_CLIENT_TYPE: "issuegateway-<OS>-<AIG version>",
+	A360_CLIENT_TYPE: "issuegateway-<AIG version>"
 };
 
 module.exports = Object.freeze(constants);

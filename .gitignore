@@ -10,3 +10,4 @@
 /appscan-config.xml
 /config
 /whitesource
+certificates/mycert.pem

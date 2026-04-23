@@ -41,7 +41,7 @@ methods.igwLogin = async (req, res) => {
         const allowedLoginFields = ['adminEmail', 'adminPassword'];
         const receivedFields = Object.keys(req.body);
         const unexpectedFields = receivedFields.filter(field => !allowedLoginFields.includes(field));
-        
+
         if (unexpectedFields.length > 0) {
             logger.warn(`Login attempt with unexpected fields: ${unexpectedFields.join(', ')}`);
             return res.status(400).json({ "message": "Invalid request: unexpected fields provided" });
@@ -109,7 +109,7 @@ methods.createConfig = (req, res) => {
     // Reject requests with unexpected fields
     const receivedFields = Object.keys(req.body);
     const unexpectedFields = receivedFields.filter(field => !allowedFields.includes(field));
-    
+
     if (unexpectedFields.length > 0) {
         logger.warn(`Config update attempt with unexpected fields: ${unexpectedFields.join(', ')}`);
         return res.status(400).json({ "message": "Invalid request: unexpected fields provided" });
@@ -118,7 +118,7 @@ methods.createConfig = (req, res) => {
     const sanitizedConfig = {};
     allowedFields.forEach(field => {
         if (req.body[field] !== undefined) {
-                sanitizedConfig[field] = req.body[field];
+            sanitizedConfig[field] = req.body[field];
         }
     });
 
@@ -322,7 +322,7 @@ const getLatestProviderTickets = async (providerId, period) => {
         if (result.code < 200 || result.code > 299) logger.error(`Failed to fetch provider tickets ${result.data}`);
         else {
             completedScans = (result.data) ? result.data : [];
-            logger.info(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Found ${completedScans.total || 0} updated ${providerId} tickets in last ${period}`);
+            logger.info(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Found ${completedScans.issues.length || 0} updated ${providerId} tickets in last ${period}`);
         }
     } catch (error) {
         logger.error(`Failed to fetch updated tickets from ${providerId}. ${error}`);
@@ -399,7 +399,7 @@ const startProviderCron = async (providerId, syncinterval) => {
 
         const providerTickets = await getLatestProviderTickets(providerId, syncinterval);
 
-        if (providerTickets?.total > 0) {
+        if (providerTickets?.issues.length > 0) {
             if (process.env.APPSCAN_PROVIDER === 'ASE') {
                 for (const res of providerTickets.issues) {
                     await processImUpdate(res, imConfig, bidrectionalMapping, token, providerId);
@@ -417,21 +417,76 @@ const startProviderCron = async (providerId, syncinterval) => {
     }
 }
 
+
 const processImUpdate = async (res, imConfig, bidrectionalMapping, token, providerId) => {
-    const jiraIssueProperty = await igwService.getJiraIssueProperty(res.key, imConfig);
-    if (jiraIssueProperty && jiraIssueProperty.value && jiraIssueProperty.value.createdBy === 'appScan') {
-        let description = JSON.parse(res.fields.description);
-        let issueId = process.env.APPSCAN_PROVIDER === 'ASE' ? description.id : description.Id;
-        let applicationId = description.ApplicationId;
-        try {
-            const currentIssueStatus = res.fields.status.name;
-            let status = bidrectionalMapping[currentIssueStatus];
-            let comment = `${status} on JIRA`;
-            await updateIssuesOfApplication(issueId, applicationId, status, comment, '', token);
-            logger.info(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Status of the ${process.env.APPSCAN_PROVIDER} issue with Id ${issueId} and application Id ${applicationId} has been changed to ${status} successfully.`);
-        } catch (error) {
-            logger.error(error);
+    try {
+        // Validate required parameters
+        if (!res || !res.key) {
+            logger.warn(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Skipping update - missing issue key`);
+            return;
         }
+
+        if (!res.fields) {
+            logger.warn(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Skipping update for ${res.key} - missing fields`);
+            return;
+        }
+
+        const jiraIssueProperty = await igwService.getJiraIssueProperty(res.key, imConfig);
+
+        if (jiraIssueProperty && jiraIssueProperty.value && jiraIssueProperty.value.createdBy === 'appScan') {
+            // Validate description structure before parsing
+            const descriptionText = res.fields.description?.content?.[0]?.content?.[0]?.text;
+            if (!descriptionText) {
+                logger.warn(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Skipping update for ${res.key} - missing or invalid description format`);
+                return;
+            }
+
+            let description;
+            try {
+                description = JSON.parse(descriptionText);
+            } catch (parseError) {
+                logger.error(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Failed to parse description for ${res.key} - ${parseError.message}`);
+                return;
+            }
+
+            // Validate description content
+            const issueId = process.env.APPSCAN_PROVIDER === 'ASE' ? description.id : description.Id;
+            const applicationId = description.ApplicationId;
+
+            if (!issueId) {
+                logger.warn(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Skipping update for ${res.key} - missing issue ID in description`);
+                return;
+            }
+
+            if (!applicationId) {
+                logger.warn(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Skipping update for ${res.key} - missing application ID in description`);
+                return;
+            }
+
+            // Validate status
+            if (!res.fields.status || !res.fields.status.name) {
+                logger.warn(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Skipping update for ${res.key} - missing status information`);
+                return;
+            }
+
+            const currentIssueStatus = res.fields.status.name;
+            const status = bidrectionalMapping[currentIssueStatus];
+
+            if (!status) {
+                logger.warn(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Skipping update for ${res.key} - no status mapping found for '${currentIssueStatus}'`);
+                return;
+            }
+
+            try {
+                const comment = `${status} on JIRA`;
+                await updateIssuesOfApplication(issueId, applicationId, status, comment, '', token);
+                logger.info(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Status of the ${process.env.APPSCAN_PROVIDER} issue with Id ${issueId} and application Id ${applicationId} has been changed to ${status} successfully.`);
+            } catch (error) {
+                logger.error(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Failed to update issue ${issueId} for ${res.key} - ${error.message || error}`);
+            }
+        }
+    } catch (error) {
+        logger.error(`${providerId} to ${process.env.APPSCAN_PROVIDER} sync job: Unexpected error processing update for ${res?.key || 'unknown'} - ${error.message || error}`);
     }
 }
 
@@ -542,6 +597,40 @@ const getPaginatedASEIssues = async (applicationId, token) => {
     return response;
 };
 
+const getPaginatedASEIssuesByStatusAndTime = async (applicationId, token, status, fromDateTime, toDateTime) => {
+    const response = { data: [] };
+    let offset = 0;
+    const limit = 100;
+    let totalItems = 0;
+
+    try {
+        do {
+            const res = await issueService.getIssuesOfApplicationByStatusAndTime(applicationId, token, status, fromDateTime, toDateTime, { 'Range': `items=${offset}-${offset + limit - 1}` });
+            response.code = res.code;
+
+            if (res.code === 200) {
+                const contentRange = res.headers['content-range'];
+                if (contentRange) {
+                    const match = contentRange.match(/items (\d+)-(\d+)\/(\d+)/);
+                    if (match) {
+                        totalItems = parseInt(match[3], 10);
+                    }
+                }
+                response.data.push(...res.data);
+                offset += limit;
+            } else {
+                logger.error(`Failed to get issues of application ${applicationId} by status and time`);
+                break;
+            }
+        } while (offset < totalItems);
+    } catch (error) {
+        logger.error(`Fetching issues of application ${applicationId} by status and time failed with error ${error}`);
+        response.code = 500;
+    }
+
+    return response;
+};
+
 const getIssuesOfApplication = async (applicationId, token) => {
     var issues = [];
     try {
@@ -566,7 +655,7 @@ const getIssuesOfApplicationByStatusAndTime = async (applicationId, token, statu
         if (process.env.APPSCAN_PROVIDER == 'ASE') {
             const fromDateTime = parseTimeToDateTime(time, 'local');
             const toDateTime = getFormatedDate(new Date());
-            result = await issueService.getIssuesOfApplicationByStatusAndTime(applicationId, token, status, fromDateTime, toDateTime);
+            result = await getPaginatedASEIssuesByStatusAndTime(applicationId, token, status, fromDateTime, toDateTime);
         }
         else if (process.env.APPSCAN_PROVIDER == 'A360') {
             let fromDateTime = parseTimeToDateTime(time, 'utc');
@@ -582,11 +671,11 @@ const getIssuesOfApplicationByStatusAndTime = async (applicationId, token, statu
             const [hours, minutes] = appScanTimeZone.split(':').map(Number);
             const delayInMilliseconds = (hours * 60 + minutes) * 60000;
             fromDateTime = new Date(new Date(fromDateTime).getTime() - delayInMilliseconds).toISOString();
-            result = await asocIssueService.getIssuesOfApplicationByStatusAndTime(applicationId, token, status, fromDateTime);
+            result = await fetchAllData(asocIssueService.getIssuesOfApplicationByStatusAndTime, token, 200, [applicationId, status, fromDateTime]);
         }
         else if (process.env.APPSCAN_PROVIDER == 'ASoC') {
             const fromDateTime = parseTimeToDateTime(time, 'utc');
-            result = await asocIssueService.getIssuesOfApplicationByStatusAndTime(applicationId, token, status, fromDateTime);
+            result = await fetchAllData(asocIssueService.getIssuesOfApplicationByStatusAndTime, token, 200, [applicationId, status, fromDateTime]);
         }
 
         if (result.code === 200) {
@@ -644,8 +733,7 @@ const getIssuesOfScan = async (scanId, applicationId, token) => {
 
 const updateIssuesOfApplication = async (issueId, applicationId, status, comment, externalid, token) => {
     try {
-        if(!token)
-        {
+        if (!token) {
             token = await appscanLoginController();
         }
         let etag = ''

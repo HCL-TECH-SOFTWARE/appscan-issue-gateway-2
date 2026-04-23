@@ -35,11 +35,11 @@ methods.aseLogin = async () => {
     var inputData = {};
     inputData["keyId"] = await credentialService.getKeyId();
     inputData["keySecret"] = await credentialService.getKeySecret();
-    
+
     if (!inputData["keyId"] || !inputData["keySecret"]) {
         throw new Error("AppScan credentials not found in secure storage. Please set them first.");
     }
-    
+
     const result = await aseAuthService.keyLogin(inputData);
     return result.data.sessionId;
 }
@@ -49,11 +49,11 @@ methods.asocLogin = async () => {
     inputData["keyId"] = await credentialService.getKeyId();
     inputData["keySecret"] = await credentialService.getKeySecret();
     inputData["clientType"] = getClientType();
-    
+
     if (!inputData["keyId"] || !inputData["keySecret"]) {
         throw new Error("AppScan credentials not found in secure storage. Please set them first.");
     }
-    
+
     const result = await asocAuthService.keyLogin(inputData);
     return result.data.Token;
 }
@@ -61,12 +61,14 @@ methods.asocLogin = async () => {
 const getClientType = () => {
     const aigVersion = getAIGVersion();
     const os = process.platform;
-    return constants.ASOC_CLIENT_TYPE.replace("<OS>", os).replace("<AIG version>", aigVersion);
+    //For A360, client type will be in format AppScan-issue-gateway-2-AIGVersion since A360 doesn't require OS info because of FED requirements.
+    const clientType = process.env.APPSCAN_PROVIDER == "A360" ? constants.A360_CLIENT_TYPE.replace("<AIG version>", aigVersion) : constants.ASOC_CLIENT_TYPE.replace("<OS>", os).replace("<AIG version>", aigVersion);
+    return clientType;
 }
 
 const getAIGVersion = () => {
-  const packageJson = require('../../../package.json');
-  return packageJson.version;
+    const packageJson = require('../../../package.json');
+    return packageJson.version;
 }
 
 methods.getCompletedScans = async (syncInterval, aseToken) => {
@@ -152,7 +154,42 @@ methods.createImScanTickets = async (filteredIssues, imConfig, providerId, appli
 methods.getLatestImTickets = async (providerId, syncInterval, imConfig) => {
     var result;
     if (providerId === constants.DTS_JIRA) {
-        result = await jiraService.getMarkedTickets(syncInterval, imConfig);
+        let allIssues = [];
+        let nextPageToken = null;
+        let isLast = false;
+        const maxIterations = 1000; // Safety limit to prevent infinite loops
+        let iterations = 0;
+        const seenTokens = new Set(); // Detect circular pagination
+
+        while (!isLast && iterations < maxIterations) {
+            // Detect circular pagination
+            if (nextPageToken && seenTokens.has(nextPageToken)) {
+                logger.warn('Circular pagination detected, breaking loop to prevent infinite iteration');
+                break;
+            }
+            if (nextPageToken) seenTokens.add(nextPageToken);
+
+            const response = await jiraService.getMarkedTickets(syncInterval, imConfig, nextPageToken);
+            iterations++;
+
+            if (response.code < 200 || response.code > 299) {
+                return response;
+            }
+            const issues = response.data.issues || [];
+            allIssues = allIssues.concat(issues);
+
+            if (response.data.isLast === false && response.data.nextPageToken) {
+                nextPageToken = response.data.nextPageToken;
+            } else {
+                isLast = true;
+            }
+        }
+
+        if (iterations >= maxIterations) {
+            logger.error(`Max iterations (${maxIterations}) reached while fetching JIRA tickets, possible API misbehavior`);
+        }
+
+        result = { code: 200, data: { issues: allIssues, total: allIssues.length } };
     }
     return result;
 }

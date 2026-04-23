@@ -4,6 +4,8 @@ The `appscan-issue-gateway-v2` facilitates issue synchronization between AppScan
 
 > **SECURITY UPDATE**: This application includes secure credential storage using the system's native credential managers (Windows Credential Manager, macOS Keychain, or Linux Secret Service API). All sensitive information, including AppScan credentials and encryption keys, is now stored securely in your system's native credential store. Update your configuration to use the new secure credential management system.
 
+> **DEPRECATION NOTICE**: **Jira Datacenter support is deprecated** in this version and will be removed in future releases. In alignment with [Atlassian's announcement regarding the end of support for Jira Datacenter](https://www.atlassian.com/migration/assess/journey-to-cloud), we are transitioning to **Jira Cloud** as our primary supported platform. If you need to continue using Jira Datacenter, please use **version 1.1.2 or lower** of the AppScan Issue Gateway. We recommend migrating to Jira Cloud to ensure continued support and access to the latest features.
+
 ## Prerequisites
 Before you begin, ensure you have:
 
@@ -12,7 +14,7 @@ Before you begin, ensure you have:
    - HCL AppScan Enterprise version 10.x or later
    - AppScan on Cloud
    - AppScan 360° version 1.3 or later
-3. A supported Issue Management system: Jira (on-premises)
+3. A supported Issue Management system: Jira Cloud (Jira Datacenter support deprecated - see notice above)
 
 ## Installation steps
 
@@ -121,6 +123,28 @@ To ensure the application restarts automatically when the system boots:
 pm2 startup                  # Generate startup script
 pm2 save                     # Save current configuration
 ```
+##### Windows auto-start setup
+Since PM2 doesn't natively support Windows for its startup hook, use the officially recommended third-party package [pm2-windows-startup](https://www.npmjs.com/package/pm2-windows-startup).
+
+1. Install the Windows startup package globally:
+   ```bash
+   npm install pm2-windows-startup -g
+   ```
+
+2. Initialize the startup script:
+   ```bash
+   pm2-startup install
+   ```
+
+3. Start your application:
+   ```bash
+   pm2 start server.js --name "IssueGateway2" --node-args="--openssl-legacy-provider"
+   ```
+
+4. Save the current PM2 process list (this tells Windows which processes to restore on boot):
+   ```bash
+   pm2 save
+   ```
 
 For more information, visit the [PM2 documentation](https://pm2.keymetrics.io/docs/usage/quick-start/).
 
