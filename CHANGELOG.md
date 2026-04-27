@@ -2,8 +2,9 @@ Release Summary
 =========
 1.1.3 (April 2026)
 ------
-* Fixed security vulnerabilities
-* Included support for Jira Cloud and deprecated support for Jira Datacenter
+* Fixed security vulnerabilities.
+* Added Jira Cloud support for HCL AppScan Enterprise, AppScan on Cloud, and AppScan 360°.
+* Deprecated support for Jira Datacenter.
 
 1.1.2 (February 2026)
 ------

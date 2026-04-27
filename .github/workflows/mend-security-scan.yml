@@ -21,15 +21,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check for dependency file changes
+      - name: Check for dependency file changes in latest push
         if: github.event.action == 'synchronize'
-        uses: dorny/paths-filter@v3
         id: filter
-        with:
-          filters: |
-            dependencies:
-              - 'package.json'
-              - 'package-lock.json'
+        run: |
+          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} -- package.json package-lock.json)
+          if [ -n "$CHANGED" ]; then
+            echo "dependencies=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "dependencies=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Decide whether to run scan
         id: decide
