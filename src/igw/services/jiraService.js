@@ -48,6 +48,7 @@ methods.createTickets = async (issues, imConfigObject, applicationId, applicatio
             const result = await util.httpImCall(imConfig);
             await delay(3000);
             if (result.code === 201) {
+                logger.info(`Jira issue created: ${result.data.key}`);
                 const imTicket = imConfigObject.imurl + "/browse/" + result.data.key;
 
                 //create Jira issue property to indentify the issues created by AppScan
@@ -154,6 +155,7 @@ methods.createScanTickets = async (issues, imConfigObject, applicationId, applic
             const result = await util.httpImCall(imConfig);
             await delay(3000);
             if (result.code === 201) {
+                logger.info(`Jira issue created: ${result.data.key}`);
                 const imTicket = imConfigObject.imurl + "/browse/" + result.data.key;
                 process.env.APPSCAN_PROVIDER == "ASE" ? success.push({ scanId: scanId, ticket: imTicket }) : success.push({ scanId: scanId, ticket: imTicket });
             }
@@ -182,6 +184,19 @@ const replacePlaceholders = (template, issue) => {
     });
 };
 
+const decodeIssueValues = (obj) => {
+    if (typeof obj === 'string') return decodeHtml(obj);
+    if (Array.isArray(obj)) return obj.map(item => decodeIssueValues(item));
+    if (obj !== null && typeof obj === 'object') {
+        const result = {};
+        for (const [k, v] of Object.entries(obj)) {
+            result[k] = decodeIssueValues(v);
+        }
+        return result;
+    }
+    return obj;
+};
+
 
 const createPayload = async (issue, imConfigObject, applicationId, applicationName) => {
 
@@ -192,7 +207,8 @@ const createPayload = async (issue, imConfigObject, applicationId, applicationNa
     attrMap["summary"] = replacePlaceholders(imConfigObject.imSummary, issue);
 
 
-    attrMap["description"] = toADF(JSON.stringify(issue, null, 4));
+    const issueForDesc = process.env.APPSCAN_PROVIDER === "ASE" ? decodeIssueValues(issue) : issue;
+    attrMap["description"] = toADF(JSON.stringify(issueForDesc, null, 4));
     const attributeMappings = typeof imConfigObject.attributeMappings != 'undefined' ? imConfigObject.attributeMappings : [];
 
     for (var i = 0; i < attributeMappings.length; i++) {
@@ -247,7 +263,8 @@ const createScanPayload = async (issue, imConfigObject, applicationId, applicati
     else {
         attrMap["summary"] = "Security issue: " + scanId + ' ' + discoveryMethod + " found by AppScan";
     }
-    attrMap["description"] = toADF(JSON.stringify(issue, null, 4));
+    const issueForDescScan = process.env.APPSCAN_PROVIDER === "ASE" ? decodeIssueValues(issue) : issue;
+    attrMap["description"] = toADF(JSON.stringify(issueForDescScan, null, 4));
     const attributeMappings = typeof imConfigObject.attributeMappings != 'undefined' ? imConfigObject.attributeMappings : [];
     let labelName = applicationName.trim();
     labelName = labelName.split(/\s+/).join('_')
@@ -457,3 +474,4 @@ const toADF = (text) => ({
 });
 
 module.exports = methods;
+module.exports.decodeIssueValues = decodeIssueValues;

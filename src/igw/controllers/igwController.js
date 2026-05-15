@@ -880,7 +880,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
     let count = 0
     if (process.env.GENERATE_SCAN_HTML_FILE_JIRA == 'true' && scanId != '' && filteredIssues.length > 0 && (process.env.APPSCAN_PROVIDER == 'ASoC' || process.env.APPSCAN_PROVIDER == 'A360')) {
         try {
-            let downloadPath = `./temp/${applicationId}.html`;
+            let downloadPath = `./temp/${applicationId}_${scanId}.html`;
             let discoveryMethod = filteredIssues[0].DiscoveryMethod;
             let scanDetails = process.env.APPSCAN_PROVIDER == 'ASE' ? await jobService.getScanJobDetails(scanId, token) : await asocIssueService.getScanDetails(scanId, technology, token);
             if (scanDetails.code === 200 && scanDetails.data !== 'undefined')

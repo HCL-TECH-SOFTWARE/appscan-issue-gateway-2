@@ -130,7 +130,7 @@ methods.downloadAsocReport = async (providerId, appId, scanId, issues, token) =>
         const getDownloadReportsUrl = await constants.ASoC_GET_HTML_ISSUE_DETAILS.replace("{REPORTID}", reportID); //GET REPORT DOWNLOAD URL
         const getReportStatusUrl = await constants.ASoC_REPORT_STATUS.replace("{REPORTID}", reportID); //GET REPORT STATUS
 
-        var downloadPath = `./temp/${appId}.html`;
+        var downloadPath = `./temp/${appId}_${scanId}.html`;
         let intervalid;
         async function splitFile() {
             return new Promise(

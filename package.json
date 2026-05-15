@@ -7,7 +7,8 @@
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider nodemon ./server.js",
     "start:prod": "cross-env NODE_OPTIONS=--openssl-legacy-provider node ./server.js",
     "credentials": "node scripts/manage-credentials.js",
-    "security-key": "node cryptoService.js"
+    "security-key": "node cryptoService.js",
+    "test": "jest --testPathPattern=test/"
   },
   "author": "shashidharp@hcl.com",
   "license": "ISC",
@@ -42,6 +43,7 @@
     ]
   },
   "devDependencies": {
-    "cross-env": "^10.1.0"
+    "cross-env": "^10.1.0",
+    "jest": "^29.7.0"
   }
 }
