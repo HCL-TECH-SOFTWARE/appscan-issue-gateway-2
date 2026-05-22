@@ -1,5 +1,9 @@
 Release Summary
 =========
+1.1.4 (May 2026)
+------
+* Fixed security vulnerabilities.
+
 1.1.3 (April 2026)
 ------
 * Fixed security vulnerabilities.
