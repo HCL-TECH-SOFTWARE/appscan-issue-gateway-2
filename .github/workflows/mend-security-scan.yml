@@ -7,7 +7,7 @@ on:
 
 env:
   MEND_AGENT_VERSION: "20.10.2"
-  NODE_VERSION: "16"
+  NODE_VERSION: "20"
   JAVA_VERSION: "11"
   JAVA_DISTRIBUTION: "temurin"
 
