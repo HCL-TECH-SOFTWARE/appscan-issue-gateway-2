@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2025 HCL America, Inc.
+ * Copyright 2025,2026 HCL America, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ const log4js = require("log4js");
 const logger = log4js.getLogger("igwController");
 const constants = require("../../utils/constants");
 const igwService = require('../../igw/services/igwService')
+const path = require('path');
+const crypto = require('crypto');
 var methods = {};
 
 
@@ -130,7 +132,7 @@ methods.downloadAsocReport = async (providerId, appId, scanId, issues, token) =>
         const getDownloadReportsUrl = await constants.ASoC_GET_HTML_ISSUE_DETAILS.replace("{REPORTID}", reportID); //GET REPORT DOWNLOAD URL
         const getReportStatusUrl = await constants.ASoC_REPORT_STATUS.replace("{REPORTID}", reportID); //GET REPORT STATUS
 
-        var downloadPath = `./temp/${appId}.html`;
+        const downloadPath = path.resolve('temp', `${crypto.randomUUID()}.html`);
         let intervalid;
         async function splitFile() {
             return new Promise(
@@ -142,9 +144,9 @@ methods.downloadAsocReport = async (providerId, appId, scanId, issues, token) =>
                                 if (res.Status == 'Ready' && res.Id == reportID) {
                                     let downloadFileData = await util.downloadFile(getDownloadReportsUrl, downloadPath, token);
                                     if (downloadFileData) {
-                                        let res = await igwService.splitHtmlFile(downloadPath, appId)
+                                        await igwService.splitHtmlFile(downloadPath, appId)
                                         clearInterval(intervalid)
-                                        resolve(res)
+                                        resolve(downloadPath)
                                     }
                                 }
                             })

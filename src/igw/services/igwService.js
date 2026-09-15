@@ -33,21 +33,11 @@ const cheerio = require('cheerio');
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const addData = require('../../utils/htmlTemplate');
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const issueReportPaths = new Map();
+const getIssueReportKey = (appId, issueId) => `${appId}:${issueId}`;
 
-const getSafeIssueIdentifier = issueId => {
-    if (typeof issueId !== 'string' || issueId.length === 0) throw new Error('Invalid issue ID');
-    return UUID_PATTERN.test(issueId) ? issueId : crypto.createHash('sha256').update(issueId).digest('hex');
-};
-
-const getIssueReportPath = (appId, issueId) => {
-    if (!UUID_PATTERN.test(appId)) throw new Error('Invalid application ID');
-
-    const reportsDirectory = path.resolve('tempReports');
-    const reportPath = path.resolve(reportsDirectory, `${appId}_${getSafeIssueIdentifier(issueId)}.html`);
-    if (!reportPath.startsWith(`${reportsDirectory}${path.sep}`)) throw new Error('Invalid report file path');
-    return reportPath;
-};
+methods.getIssueReportPath = (appId, issueId) => issueReportPaths.get(getIssueReportKey(appId, issueId));
+methods.removeIssueReportPath = (appId, issueId) => issueReportPaths.delete(getIssueReportKey(appId, issueId));
 
 methods.aseLogin = async () => {
     var inputData = {};
@@ -751,17 +741,14 @@ methods.splitHtmlFile = async (downloadPath, appId) => {
             // Store the article content in the articleData object using the article name as the key
             articleData[articleName] = articleContent;
         });
-        objKeys.map(issue => {
+        await Promise.all(objKeys.map(async issue => {
             if (sections[issue]['issue'] && issue != '' && sections[issue]['issue'] != '' && issue.length < 50) {
                 let htmlReports = addData.addData({ applicationName, businessImpact, reportName, reportDate, issue: sections[issue]['issue'], fixGroupId: sections[issue]['fixGroupId'], issueTypeName: sections[issue]['issueTypeName'], severityClass: sections[issue]['severityClass'], "howToFix": articleData[`${sections[issue]?.['href']?.[1]}`] || '', "howToFixTitle": sections[issue]['howToFix'], "issueTypeAttr": sections[issue]?.['href']?.[1] || '', "fixGroupHeaderData": sections[issue]['fixGroupData'] });
-
-                fs.writeFile(getIssueReportPath(appId, issue), htmlReports, async err => {
-                    if (err) {
-                        logger.error(`Error Splitting HTML file for ${appId} - ${issue} - ${err}`)
-                    };
-                })
+                const reportPath = path.resolve('tempReports', `${crypto.randomUUID()}.html`);
+                await fs.promises.writeFile(reportPath, htmlReports, 'utf8');
+                issueReportPaths.set(getIssueReportKey(appId, issue), reportPath);
             }
-        })
+        }));
     } catch (err) {
         logger.error(err)
     }

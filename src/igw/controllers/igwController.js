@@ -47,29 +47,6 @@ const isSafeConfigValue = value => {
         !['__proto__', 'constructor', 'prototype'].includes(key) && isSafeConfigValue(childValue));
 };
 
-const getSafeFilePath = (directory, fileName) => {
-    const rootDirectory = path.resolve(directory);
-    const filePath = path.resolve(rootDirectory, fileName);
-
-    if (!filePath.startsWith(`${rootDirectory}${path.sep}`)) throw new Error('Invalid report file path');
-    return filePath;
-};
-
-const getScanReportPath = applicationId => {
-    if (!UUID_PATTERN.test(applicationId)) throw new Error('Invalid application ID');
-    return getSafeFilePath('temp', `${applicationId}.html`);
-};
-
-const getSafeIssueIdentifier = issueId => {
-    if (typeof issueId !== 'string' || issueId.length === 0) throw new Error('Invalid issue ID');
-    return UUID_PATTERN.test(issueId) ? issueId : crypto.createHash('sha256').update(issueId).digest('hex');
-};
-
-const getIssueReportPath = (applicationId, issueId) => {
-    if (!UUID_PATTERN.test(applicationId)) throw new Error('Invalid application ID');
-    return getSafeFilePath('tempReports', `${applicationId}_${getSafeIssueIdentifier(issueId)}.html`);
-};
-
 methods.igwLogin = async (req, res) => {
     try {
         // Explicitly extract only allowed fields to prevent mass assignment
@@ -906,9 +883,10 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
     if (typeof imConfig === 'undefined') return;
     const filteredIssues = await igwService.filterIssues(issues, imConfig);
 
+    let scanReportPath;
     if ((process.env.APPSCAN_PROVIDER == "ASoC" || process.env.APPSCAN_PROVIDER == 'A360') && filteredIssues.length > 0 && process.env.GENERATE_HTML_FILE_JIRA == "true") {
         try {
-            await asocIssueService.downloadAsocReport(providerId, applicationId, scanId, issues, token)
+            scanReportPath = await asocIssueService.downloadAsocReport(providerId, applicationId, scanId, issues, token)
         } catch (err) {
             logger.error(`Downloading ASoC Reports for ${applicationId} failed with error - ${err ? err.message : err}`);
         }
@@ -920,7 +898,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
     let count = 0
     if (process.env.GENERATE_SCAN_HTML_FILE_JIRA == 'true' && scanId != '' && filteredIssues.length > 0 && (process.env.APPSCAN_PROVIDER == 'ASoC' || process.env.APPSCAN_PROVIDER == 'A360')) {
         try {
-            let downloadPath = getScanReportPath(applicationId);
+            let downloadPath = scanReportPath;
             let discoveryMethod = filteredIssues[0].DiscoveryMethod;
             let scanDetails = process.env.APPSCAN_PROVIDER == 'ASE' ? await jobService.getScanJobDetails(scanId, token) : await asocIssueService.getScanDetails(scanId, technology, token);
             if (scanDetails.code === 200 && scanDetails.data !== 'undefined')
@@ -933,7 +911,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
             let scanObj = successScanArray[0];
             let imScanTicket = scanObj.ticket;
             try {
-                if (require("fs").existsSync(downloadPath)) {
+                if (downloadPath && require("fs").existsSync(downloadPath)) {
                     await igwService.attachIssueDataFile(imScanTicket, downloadPath, imConfig, providerId);
                 }
             } catch (error) {
@@ -968,7 +946,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
             issueObj["updateExternalIdError"] = error;
         }
         if (process.env.APPSCAN_PROVIDER == "ASoC" || process.env.APPSCAN_PROVIDER == 'A360') {
-            var downloadPath = getIssueReportPath(applicationId, issueId);
+            var downloadPath = igwService.getIssueReportPath(applicationId, issueId);
         } else if (process.env.APPSCAN_PROVIDER == "ASE") {
             var downloadPath = `./temp/${applicationId}_${issueId}.zip`;
         }
@@ -981,7 +959,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
             }
         }
         try {
-            if (require("fs").existsSync(downloadPath)) {
+            if (downloadPath && require("fs").existsSync(downloadPath)) {
                 await igwService.attachIssueDataFile(imTicket, downloadPath, imConfig, providerId);
             }
 
@@ -991,7 +969,8 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
         }
 
         try {
-            if (require("fs").existsSync(downloadPath)) require("fs").rmSync(downloadPath);
+            if (downloadPath && require("fs").existsSync(downloadPath)) require("fs").rmSync(downloadPath);
+            igwService.removeIssueReportPath(applicationId, issueId);
         } catch (error) {
             logger.error(`Deleting the html data file for the issueId ${issueId} attached to ticket ${imTicket} failed with an error ${error}`);
         }
