@@ -68,5 +68,9 @@ jobs:
         if: steps.decide.outputs.should_scan == 'true'
         env:
           MEND_API_KEY: ${{ secrets.MEND_KEY }}
+          MEND_USER_KEY: ${{ secrets.MEND_USER_KEY }}
         run: |
-          java -jar wss-unified-agent-${{ env.MEND_AGENT_VERSION }}.jar -apiKey "${MEND_API_KEY}" -c wss-unified-agent.config
+          java -jar wss-unified-agent-${{ env.MEND_AGENT_VERSION }}.jar \
+            -apiKey "${MEND_API_KEY}" \
+            -userKey "${MEND_USER_KEY}" \
+            -c wss-unified-agent.config
