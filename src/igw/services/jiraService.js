@@ -298,6 +298,21 @@ methods.attachIssueDataFile = async (ticket, filePath, imConfigObject) => {
     return await util.httpImCall(imConfig);
 }
 
+methods.attachIssueData = async (ticket, fileData, imConfigObject, fileName) => {
+    const url = imConfigObject.imurl + constants.JIRA_ATTACH_FILE.replace("{JIRAID}", ticket);
+    const formData = new FormData();
+    formData.append('file', fileData, { filename: fileName, contentType: 'text/html' });
+    let userData = imConfigObject.imUserName + ":" + imConfigObject.imPassword;
+    var basicToken = `Basic ${Buffer.from(userData).toString('base64')}`;
+    const imConfig = getConfig("POST", basicToken, url, formData);
+    imConfig.headers = {
+        ...imConfig.headers,
+        ...formData.getHeaders(),
+        'X-Atlassian-Token': 'nocheck'
+    };
+    return await util.httpImCall(imConfig);
+}
+
 methods.getMarkedTickets = async (syncInterval, imConfigObject, nextPageToken) => {
 
     const imStatus = Object.keys(imConfigObject.jiraToAppScanStatusMapping);

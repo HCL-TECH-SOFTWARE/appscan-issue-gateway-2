@@ -27,29 +27,24 @@ const constants = require("../../utils/constants");
 const log4js = require("log4js");
 const logger = log4js.getLogger("igwService");
 const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
 const cheerio = require('cheerio');
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const addData = require('../../utils/htmlTemplate');
 
-const issueReportIds = new Map();
+const issueReports = new Map();
 const getIssueReportKey = (appId, issueId) => `${appId}:${issueId}`;
-const getIssueReportPath = reportId => path.resolve('tempReports', `${reportId}.html`);
 
-methods.hasIssueReport = (appId, issueId) => issueReportIds.has(getIssueReportKey(appId, issueId));
+methods.hasIssueReport = (appId, issueId) => issueReports.has(getIssueReportKey(appId, issueId));
 
 methods.attachAndRemoveIssueReport = async (appId, issueId, imTicket, imConfig, providerId) => {
     const reportKey = getIssueReportKey(appId, issueId);
-    const reportId = issueReportIds.get(reportKey);
-    if (!reportId) return;
-    const reportPath = getIssueReportPath(reportId);
+    const reportHtml = issueReports.get(reportKey);
+    if (!reportHtml) return;
 
     try {
-        if (fs.existsSync(reportPath)) await methods.attachIssueDataFile(imTicket, reportPath, imConfig, providerId);
+        await methods.attachIssueData(imTicket, reportHtml, imConfig, providerId);
     } finally {
-        issueReportIds.delete(reportKey);
-        await fs.promises.rm(reportPath, { force: true });
+        issueReports.delete(reportKey);
     }
 };
 
@@ -384,6 +379,13 @@ methods.attachIssueDataFile = async (ticket, downloadPath, imConfig, providerId)
         // }, 10000)
 
         // return result;
+    }
+}
+
+methods.attachIssueData = async (ticket, reportHtml, imConfig, providerId) => {
+    if (providerId === constants.DTS_JIRA) {
+        const reportData = Buffer.from(reportHtml, 'utf8');
+        return await jiraService.attachIssueData(ticket.split("/browse/")[1], reportData, imConfig, 'issue-report.html');
     }
 }
 
@@ -758,10 +760,7 @@ methods.splitHtmlFile = async (downloadPath, appId) => {
         await Promise.all(objKeys.map(async issue => {
             if (sections[issue]['issue'] && issue != '' && sections[issue]['issue'] != '' && issue.length < 50) {
                 let htmlReports = addData.addData({ applicationName, businessImpact, reportName, reportDate, issue: sections[issue]['issue'], fixGroupId: sections[issue]['fixGroupId'], issueTypeName: sections[issue]['issueTypeName'], severityClass: sections[issue]['severityClass'], "howToFix": articleData[`${sections[issue]?.['href']?.[1]}`] || '', "howToFixTitle": sections[issue]['howToFix'], "issueTypeAttr": sections[issue]?.['href']?.[1] || '', "fixGroupHeaderData": sections[issue]['fixGroupData'] });
-                const reportId = crypto.randomUUID();
-                const reportPath = getIssueReportPath(reportId);
-                await fs.promises.writeFile(reportPath, htmlReports, 'utf8');
-                issueReportIds.set(getIssueReportKey(appId, issue), reportId);
+                issueReports.set(getIssueReportKey(appId, issue), htmlReports);
             }
         }));
     } catch (err) {
