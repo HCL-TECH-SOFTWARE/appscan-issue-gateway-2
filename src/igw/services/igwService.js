@@ -33,22 +33,23 @@ const cheerio = require('cheerio');
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const addData = require('../../utils/htmlTemplate');
 
-const issueReportPaths = new Map();
+const issueReportIds = new Map();
 const getIssueReportKey = (appId, issueId) => `${appId}:${issueId}`;
+const getIssueReportPath = reportId => path.resolve('tempReports', `${reportId}.html`);
 
-methods.getIssueReportPath = (appId, issueId) => issueReportPaths.get(getIssueReportKey(appId, issueId));
-methods.removeIssueReportPath = (appId, issueId) => issueReportPaths.delete(getIssueReportKey(appId, issueId));
+methods.hasIssueReport = (appId, issueId) => issueReportIds.has(getIssueReportKey(appId, issueId));
 
 methods.attachAndRemoveIssueReport = async (appId, issueId, imTicket, imConfig, providerId) => {
     const reportKey = getIssueReportKey(appId, issueId);
-    const reportPath = issueReportPaths.get(reportKey);
-    if (!reportPath) return;
+    const reportId = issueReportIds.get(reportKey);
+    if (!reportId) return;
+    const reportPath = getIssueReportPath(reportId);
 
     try {
         if (fs.existsSync(reportPath)) await methods.attachIssueDataFile(imTicket, reportPath, imConfig, providerId);
     } finally {
-        issueReportPaths.delete(reportKey);
-        if (fs.existsSync(reportPath)) fs.rmSync(reportPath);
+        issueReportIds.delete(reportKey);
+        await fs.promises.rm(reportPath, { force: true });
     }
 };
 
@@ -757,9 +758,10 @@ methods.splitHtmlFile = async (downloadPath, appId) => {
         await Promise.all(objKeys.map(async issue => {
             if (sections[issue]['issue'] && issue != '' && sections[issue]['issue'] != '' && issue.length < 50) {
                 let htmlReports = addData.addData({ applicationName, businessImpact, reportName, reportDate, issue: sections[issue]['issue'], fixGroupId: sections[issue]['fixGroupId'], issueTypeName: sections[issue]['issueTypeName'], severityClass: sections[issue]['severityClass'], "howToFix": articleData[`${sections[issue]?.['href']?.[1]}`] || '', "howToFixTitle": sections[issue]['howToFix'], "issueTypeAttr": sections[issue]?.['href']?.[1] || '', "fixGroupHeaderData": sections[issue]['fixGroupData'] });
-                const reportPath = path.resolve('tempReports', `${crypto.randomUUID()}.html`);
+                const reportId = crypto.randomUUID();
+                const reportPath = getIssueReportPath(reportId);
                 await fs.promises.writeFile(reportPath, htmlReports, 'utf8');
-                issueReportPaths.set(getIssueReportKey(appId, issue), reportPath);
+                issueReportIds.set(getIssueReportKey(appId, issue), reportId);
             }
         }));
     } catch (err) {

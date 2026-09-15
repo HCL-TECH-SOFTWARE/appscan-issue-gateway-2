@@ -948,7 +948,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
             issueObj["updateExternalIdError"] = error;
         }
         if (process.env.APPSCAN_PROVIDER == "ASoC" || process.env.APPSCAN_PROVIDER == 'A360') {
-            var downloadPath = igwService.getIssueReportPath(applicationId, issueId);
+            var hasIssueReport = igwService.hasIssueReport(applicationId, issueId);
         } else if (process.env.APPSCAN_PROVIDER == "ASE") {
             var downloadPath = `./temp/${applicationId}_${issueId}.zip`;
         }
@@ -961,7 +961,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
             }
         }
         try {
-            if (downloadPath) await igwService.attachAndRemoveIssueReport(applicationId, issueId, imTicket, imConfig, providerId);
+            if (hasIssueReport) await igwService.attachAndRemoveIssueReport(applicationId, issueId, imTicket, imConfig, providerId);
 
         } catch (error) {
             logger.error(`Attaching data file for the issueId ${issueId} to ticket ${imTicket} failed with an error ${error}`);
