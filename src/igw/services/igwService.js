@@ -39,6 +39,19 @@ const getIssueReportKey = (appId, issueId) => `${appId}:${issueId}`;
 methods.getIssueReportPath = (appId, issueId) => issueReportPaths.get(getIssueReportKey(appId, issueId));
 methods.removeIssueReportPath = (appId, issueId) => issueReportPaths.delete(getIssueReportKey(appId, issueId));
 
+methods.attachAndRemoveIssueReport = async (appId, issueId, imTicket, imConfig, providerId) => {
+    const reportKey = getIssueReportKey(appId, issueId);
+    const reportPath = issueReportPaths.get(reportKey);
+    if (!reportPath) return;
+
+    try {
+        if (fs.existsSync(reportPath)) await methods.attachIssueDataFile(imTicket, reportPath, imConfig, providerId);
+    } finally {
+        issueReportPaths.delete(reportKey);
+        if (fs.existsSync(reportPath)) fs.rmSync(reportPath);
+    }
+};
+
 methods.aseLogin = async () => {
     var inputData = {};
     inputData["keyId"] = await credentialService.getKeyId();

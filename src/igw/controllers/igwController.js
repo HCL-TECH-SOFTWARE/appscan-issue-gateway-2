@@ -32,6 +32,7 @@ var CronJob = require('cron').CronJob;
 const jobService = require('../../ase/service/jobService');
 const asocJobService = require('../../asoc/service/jobService');
 const { error } = require("console");
+const { matchedData } = require('express-validator');
 
 var methods = {};
 
@@ -127,10 +128,11 @@ methods.createConfig = (req, res) => {
         return res.status(400).json({ "message": "Invalid request: unexpected fields provided" });
     }
 
+    const validatedConfig = matchedData(req, { locations: ['body'] });
     const sanitizedConfig = {};
     allowedFields.forEach(field => {
-        if (req.body[field] !== undefined) {
-            sanitizedConfig[field] = req.body[field];
+        if (validatedConfig[field] !== undefined) {
+            sanitizedConfig[field] = validatedConfig[field];
         }
     });
 
@@ -959,21 +961,13 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
             }
         }
         try {
-            if (downloadPath && require("fs").existsSync(downloadPath)) {
-                await igwService.attachIssueDataFile(imTicket, downloadPath, imConfig, providerId);
-            }
+            if (downloadPath) await igwService.attachAndRemoveIssueReport(applicationId, issueId, imTicket, imConfig, providerId);
 
         } catch (error) {
             logger.error(`Attaching data file for the issueId ${issueId} to ticket ${imTicket} failed with an error ${error}`);
             issueObj["attachIssueDataFileError"] = error;
         }
 
-        try {
-            if (downloadPath && require("fs").existsSync(downloadPath)) require("fs").rmSync(downloadPath);
-            igwService.removeIssueReportPath(applicationId, issueId);
-        } catch (error) {
-            logger.error(`Deleting the html data file for the issueId ${issueId} attached to ticket ${imTicket} failed with an error ${error}`);
-        }
     }
     await fs.readdir('./tempReports', (err, files) => {
         if (err) {
