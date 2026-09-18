@@ -16,7 +16,7 @@
  * /
  */
 
-const { param, body } = require("express-validator");
+const { param, body, query } = require("express-validator");
 const constants = require("../utils/constants");
 
 var schemas = {};
@@ -39,8 +39,22 @@ schemas.imPassword = process.env.APPSCAN_PROVIDER == 'ASE' ? body('imPassword').
 schemas.improjectkey = body('improjectkey').isString().isLength({ min: 2, max: 30 }).withMessage(constants.INVALID_PROJECT_KEY);
 schemas.imissuetype = body('imissuetype').isString().isLength({ min: 2, max: 20 }).withMessage(constants.INVALID_IM_ISSUE_TYPE);
 schemas.imSummary = body('imSummary').isString().isLength({ min: 2, max: 500 }).withMessage(constants.INVALID_IM_SUMMARY);
+schemas.isScanTicket = body('isScanTicket').optional().isBoolean().withMessage('Invalid scan ticket value');
+schemas.severityPriorityMap = body('severityPriorityMap').optional().isObject().withMessage('Invalid severity priority map');
+schemas.attributeMappings = body('attributeMappings').optional().isArray().withMessage('Invalid attribute mappings');
+schemas.jiraToAppScanStatusMapping = body('jiraToAppScanStatusMapping').optional().isObject().withMessage('Invalid Jira status mapping');
+schemas.jiraStatusIdMapping = body('jiraStatusIdMapping').optional().isObject().withMessage('Invalid Jira status ID mapping');
+schemas.appScanToJiraStatusMapping = body('appScanToJiraStatusMapping').optional().isObject().withMessage('Invalid AppScan status mapping');
+
+schemas.labelSync = [
+    query('providerId').isIn(constants.PROVIDERS).withMessage(constants.INVALID_PROVIDER_ID),
+    query('project').isString().matches(/^[A-Za-z0-9._-]{1,128}$/).withMessage(constants.INVALID_PROJECT_KEY),
+    query('limit').optional().isInt({ min: 1, max: 650 }).toInt()
+];
 
 
 schemas.imConfig = [schemas.providerid, schemas.maxissues, schemas.issuestates, schemas.issueseverities,
-schemas.imurl, schemas.imUserName, schemas.imPassword, schemas.improjectkey, schemas.imissuetype, schemas.imSummary];
+schemas.imurl, schemas.imUserName, schemas.imPassword, schemas.improjectkey, schemas.imissuetype, schemas.imSummary,
+schemas.isScanTicket, schemas.severityPriorityMap, schemas.attributeMappings, schemas.jiraToAppScanStatusMapping,
+schemas.jiraStatusIdMapping, schemas.appScanToJiraStatusMapping];
 module.exports = schemas;

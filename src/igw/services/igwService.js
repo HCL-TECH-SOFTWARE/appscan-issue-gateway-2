@@ -31,6 +31,23 @@ const cheerio = require('cheerio');
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const addData = require('../../utils/htmlTemplate');
 
+const issueReports = new Map();
+const getIssueReportKey = (appId, issueId) => `${appId}:${issueId}`;
+
+methods.hasIssueReport = (appId, issueId) => issueReports.has(getIssueReportKey(appId, issueId));
+
+methods.attachAndRemoveIssueReport = async (appId, issueId, imTicket, imConfig, providerId) => {
+    const reportKey = getIssueReportKey(appId, issueId);
+    const reportHtml = issueReports.get(reportKey);
+    if (!reportHtml) return;
+
+    try {
+        await methods.attachIssueData(imTicket, reportHtml, imConfig, providerId);
+    } finally {
+        issueReports.delete(reportKey);
+    }
+};
+
 methods.aseLogin = async () => {
     var inputData = {};
     inputData["keyId"] = await credentialService.getKeyId();
@@ -362,6 +379,13 @@ methods.attachIssueDataFile = async (ticket, downloadPath, imConfig, providerId)
         // }, 10000)
 
         // return result;
+    }
+}
+
+methods.attachIssueData = async (ticket, reportHtml, imConfig, providerId) => {
+    if (providerId === constants.DTS_JIRA) {
+        const reportData = Buffer.from(reportHtml, 'utf8');
+        return await jiraService.attachIssueData(ticket.split("/browse/")[1], reportData, imConfig, 'issue-report.html');
     }
 }
 
@@ -733,17 +757,12 @@ methods.splitHtmlFile = async (downloadPath, appId) => {
             // Store the article content in the articleData object using the article name as the key
             articleData[articleName] = articleContent;
         });
-        objKeys.map(issue => {
+        await Promise.all(objKeys.map(async issue => {
             if (sections[issue]['issue'] && issue != '' && sections[issue]['issue'] != '' && issue.length < 50) {
                 let htmlReports = addData.addData({ applicationName, businessImpact, reportName, reportDate, issue: sections[issue]['issue'], fixGroupId: sections[issue]['fixGroupId'], issueTypeName: sections[issue]['issueTypeName'], severityClass: sections[issue]['severityClass'], "howToFix": articleData[`${sections[issue]?.['href']?.[1]}`] || '', "howToFixTitle": sections[issue]['howToFix'], "issueTypeAttr": sections[issue]?.['href']?.[1] || '', "fixGroupHeaderData": sections[issue]['fixGroupData'] });
-
-                fs.writeFile(`./tempReports/${appId}_${issue}.html`, htmlReports, async err => {
-                    if (err) {
-                        logger.error(`Error Splitting HTML file for ${appId} - ${issue} - ${err}`)
-                    };
-                })
+                issueReports.set(getIssueReportKey(appId, issue), htmlReports);
             }
-        })
+        }));
     } catch (err) {
         logger.error(err)
     }

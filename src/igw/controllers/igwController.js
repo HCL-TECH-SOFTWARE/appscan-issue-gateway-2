@@ -32,8 +32,21 @@ var CronJob = require('cron').CronJob;
 const jobService = require('../../ase/service/jobService');
 const asocJobService = require('../../asoc/service/jobService');
 const { error } = require("console");
+const { matchedData } = require('express-validator');
 
 var methods = {};
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const isSafeConfigValue = value => {
+    if (value === null || typeof value === 'string' || typeof value === 'boolean') return true;
+    if (typeof value === 'number') return Number.isFinite(value);
+    if (Array.isArray(value)) return value.every(isSafeConfigValue);
+    if (typeof value !== 'object' || Object.getPrototypeOf(value) !== Object.prototype) return false;
+
+    return Object.entries(value).every(([key, childValue]) =>
+        !['__proto__', 'constructor', 'prototype'].includes(key) && isSafeConfigValue(childValue));
+};
 
 methods.igwLogin = async (req, res) => {
     try {
@@ -115,17 +128,23 @@ methods.createConfig = (req, res) => {
         return res.status(400).json({ "message": "Invalid request: unexpected fields provided" });
     }
 
+    const validatedConfig = matchedData(req, { locations: ['body'] });
     const sanitizedConfig = {};
     allowedFields.forEach(field => {
-        if (req.body[field] !== undefined) {
-            sanitizedConfig[field] = req.body[field];
+        if (validatedConfig[field] !== undefined) {
+            sanitizedConfig[field] = validatedConfig[field];
         }
     });
+
+    if (!Object.values(sanitizedConfig).every(isSafeConfigValue)) {
+        logger.warn('Config update attempt with unsupported value types');
+        return res.status(400).json({ "message": "Invalid request: unsupported field values" });
+    }
 
     fs.writeFile(imFilePath, JSON.stringify(sanitizedConfig, null, 4), 'utf8', function (err) {
         if (err) {
             logger.error(`Writing config file failed with error ${err}`);
-            return res.status(500).json(err);
+            return res.status(500).json({ "message": "Unable to save configuration" });
         }
         else {
             return res.status(200).send("Success");
@@ -152,10 +171,10 @@ methods.startSynchronizer = async (req, res) => {
     const providerId = process.env.IM_PROVIDER;
     try {
         await methods.startSync(providerId, req.params.syncinterval);
-        return res.status(200).send("Started the job for provider " + providerId);
+        return res.status(200).json({ "message": "Synchronizer started" });
     } catch (error) {
         logger.error(`Unable to start the synchronizer. ${error}`);
-        return res.status(409).send(`Job for the provider ${providerId} already exists`);
+        return res.status(409).json({ "message": "Synchronizer is already running" });
     }
 }
 
@@ -164,10 +183,10 @@ methods.startIMSynchronizer = async (req, res) => {
     const syncinterval = req.params.syncinterval;
     try {
         await methods.startProviderSync(providerId, syncinterval);
-        return res.status(200).send("Started the job for provider " + providerId);
+        return res.status(200).json({ "message": "Synchronizer started" });
     } catch (error) {
         logger.error(`Unable to start the synchronizer. ${error}`);
-        return res.status(409).send(`Job for the provider ${providerId} already exists`);
+        return res.status(409).json({ "message": "Synchronizer is already running" });
     }
 }
 
@@ -787,7 +806,7 @@ methods.pushJobForScan = async (req, res) => {
     }
     else {
         logger.error(`Pushing issues of scan has failed. ${JSON.stringify(result.data)}`);
-        return res.status(500).send(`Pushing issues of scan has failed. ${JSON.stringify(result.data)}`);
+        return res.status(500).json({ "message": "Unable to push issues for the scan" });
     }
 }
 
@@ -866,9 +885,10 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
     if (typeof imConfig === 'undefined') return;
     const filteredIssues = await igwService.filterIssues(issues, imConfig);
 
+    let scanReportPath;
     if ((process.env.APPSCAN_PROVIDER == "ASoC" || process.env.APPSCAN_PROVIDER == 'A360') && filteredIssues.length > 0 && process.env.GENERATE_HTML_FILE_JIRA == "true") {
         try {
-            await asocIssueService.downloadAsocReport(providerId, applicationId, scanId, issues, token)
+            scanReportPath = await asocIssueService.downloadAsocReport(providerId, applicationId, scanId, issues, token)
         } catch (err) {
             logger.error(`Downloading ASoC Reports for ${applicationId} failed with error - ${err ? err.message : err}`);
         }
@@ -880,7 +900,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
     let count = 0
     if (process.env.GENERATE_SCAN_HTML_FILE_JIRA == 'true' && scanId != '' && filteredIssues.length > 0 && (process.env.APPSCAN_PROVIDER == 'ASoC' || process.env.APPSCAN_PROVIDER == 'A360')) {
         try {
-            let downloadPath = `./temp/${applicationId}.html`;
+            let downloadPath = scanReportPath;
             let discoveryMethod = filteredIssues[0].DiscoveryMethod;
             let scanDetails = process.env.APPSCAN_PROVIDER == 'ASE' ? await jobService.getScanJobDetails(scanId, token) : await asocIssueService.getScanDetails(scanId, technology, token);
             if (scanDetails.code === 200 && scanDetails.data !== 'undefined')
@@ -893,7 +913,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
             let scanObj = successScanArray[0];
             let imScanTicket = scanObj.ticket;
             try {
-                if (require("fs").existsSync(downloadPath)) {
+                if (downloadPath && require("fs").existsSync(downloadPath)) {
                     await igwService.attachIssueDataFile(imScanTicket, downloadPath, imConfig, providerId);
                 }
             } catch (error) {
@@ -928,7 +948,7 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
             issueObj["updateExternalIdError"] = error;
         }
         if (process.env.APPSCAN_PROVIDER == "ASoC" || process.env.APPSCAN_PROVIDER == 'A360') {
-            var downloadPath = `./tempReports/${applicationId}_${issueId}.html`;
+            var hasIssueReport = igwService.hasIssueReport(applicationId, issueId);
         } else if (process.env.APPSCAN_PROVIDER == "ASE") {
             var downloadPath = `./temp/${applicationId}_${issueId}.zip`;
         }
@@ -941,20 +961,13 @@ const pushIssuesToIm = async (providerId, scanId, applicationId, applicationName
             }
         }
         try {
-            if (require("fs").existsSync(downloadPath)) {
-                await igwService.attachIssueDataFile(imTicket, downloadPath, imConfig, providerId);
-            }
+            if (hasIssueReport) await igwService.attachAndRemoveIssueReport(applicationId, issueId, imTicket, imConfig, providerId);
 
         } catch (error) {
             logger.error(`Attaching data file for the issueId ${issueId} to ticket ${imTicket} failed with an error ${error}`);
             issueObj["attachIssueDataFileError"] = error;
         }
 
-        try {
-            if (require("fs").existsSync(downloadPath)) require("fs").rmSync(downloadPath);
-        } catch (error) {
-            logger.error(`Deleting the html data file for the issueId ${issueId} attached to ticket ${imTicket} failed with an error ${error}`);
-        }
     }
     await fs.readdir('./tempReports', (err, files) => {
         if (err) {
