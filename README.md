@@ -9,7 +9,7 @@ The `appscan-issue-gateway-v2` facilitates issue synchronization between AppScan
 ## Prerequisites
 Before you begin, ensure you have:
 
-1. Node.js runtime version 22.14.0 or later
+1. A Node.js runtime patched for [CVE-2026-111497 (Node2Shell)](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases): 22.23.4 or later in the 22.x line, 24.22.1 or later in the 24.x line, or 26.12.1 or later in the 26.x line. Check `node --version` in the same environment used to launch the service, and restart the service after upgrading Node.js.
 2. A relevant AppScan product:
    - HCL AppScan Enterprise version 10.x or later
    - AppScan on Cloud
